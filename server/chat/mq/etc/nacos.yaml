@@ -1,5 +1,5 @@
-Host: 106.15.58.0
+Host: 192.168.21.211
 Port: 8848
-NamespaceId: fd221e38-6439-4b1d-b82d-aa7cceebc537
+NamespaceId: 3c65083a-7909-4f1b-b891-9ba1c9ee466a
 Group: dev
 DataId: chat-mq.yaml

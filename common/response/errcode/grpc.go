@@ -41,6 +41,10 @@ func CodeFromGrpcError(err error) int {
 	return http.StatusInternalServerError
 }
 
+func MsgFromGrpcError(err error) string {
+	return status.Convert(err).Message()
+}
+
 // IsGrpcError checks if the error is a gRPC error.
 func IsGrpcError(err error) bool {
 	if err == nil {

@@ -1,0 +1,5 @@
+Host: 192.168.21.211
+Port: 8848
+NamespaceId: e32b6535-9ca4-49a3-b84a-a29993805bc9
+Group: dev
+DataId: relation-rpc.yaml

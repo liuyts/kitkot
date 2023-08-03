@@ -1,0 +1,5 @@
+Host: 192.168.21.211
+Port: 8848
+NamespaceId: 2c89e353-bb04-4b31-8077-f75d3a609df1
+Group: dev
+DataId: apis.yaml

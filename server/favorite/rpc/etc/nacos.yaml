@@ -1,0 +1,5 @@
+Host: 192.168.21.211
+Port: 8848
+NamespaceId: b07fa052-9b60-4a97-a209-efecbfe4ec8e
+Group: dev
+DataId: favorite-rpc.yaml

@@ -1,0 +1,5 @@
+Host: 192.168.21.211
+Port: 8848
+NamespaceId: 3bb1116e-2975-4f5c-90d5-2877b1405344
+Group: dev
+DataId: user-rpc.yaml

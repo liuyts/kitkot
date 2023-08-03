@@ -1,0 +1,104 @@
+syntax = "v1"
+
+service apis {
+	@handler UserRegister
+	post /douyin/user/register (UserRegisteRequest) returns (UserRegisterResponse)
+	@handler UserLogin
+	post /douyin/user/login (UserLoginRequest) returns (UserLoginResponse)
+}
+
+@server(
+	middleware : Auth
+)
+service apis {
+	@handler UserInfo
+	get /douyin/user (UserInfoRequest) returns (UserInfoResponse)
+	
+	@handler MessageAction
+	post /douyin/message/action (MessageActionRequest) returns (MessageActionResponse)
+	@handler MessageChat
+	get /douyin/message/chat (MessageChatRequest) returns (MessageChatResponse)
+}
+
+type (
+	UserInfoRequest {
+		UserId int64 `form:"user_id" vd:"$>0;msg:'user_id error'"`
+	}
+	UserInfoResponse {
+		BaseResponse
+		User *User `json:"user"`
+	}
+)
+
+type User {
+	Id              int64  `json:"id"`
+	Username        string `json:"name"`
+	Avatar          string `json:"avatar"`
+	FollowCount     int64  `json:"follow_count"`
+	TotalFavorited  int64  `json:"total_favorited"`
+	Signature       string `json:"signature"`
+	BackgroundImage string `json:"background_image"`
+	FollowerCount   int64  `json:"follower_count"`
+	WorkCount       int64  `json:"work_count"`
+	FavoriteCount   int64  `json:"favorite_count"`
+	IsFollow        bool   `json:"is_follow"`
+}
+
+type (
+	UserLoginRequest {
+		Username string `form:"username" vd:"len($)>0&&len($)<32;msg:'用户名长度错误'"`
+		Password string `form:"password" vd:"len($)>0&&len($)<32;msg:'密码长度错误'"`
+	}
+	UserLoginResponse {
+		BaseResponse
+		UserId int64  `json:"user_id"`
+		Token  string `json:"token"`
+	}
+)
+
+type (
+	UserRegisteRequest {
+		Username string `form:"username" vd:"len($)>0&&len($)<32;msg:'用户名长度错误'"`
+		Password string `form:"password" vd:"len($)>0&&len($)<32;msg:'密码长度错误'"`
+	}
+	UserRegisterResponse {
+		BaseResponse
+		UserId int64  `json:"user_id"`
+		Token  string `json:"token"`
+	}
+)
+
+type (
+	MessageActionRequest {
+		ToUserId   int64  `form:"to_user_id" vd:"$>0;msg:'to_user_id error'"`
+		ActionType int64  `form:"action_type" vd:"$==1;msg:'action_type error'"`
+		Content    string `form:"content" vd:"$!='';msg:'消息不能为空'"`
+	}
+	MessageActionResponse {
+		BaseResponse
+	}
+)
+
+type (
+	MessageChatRequest {
+		ToUserId   int64 `form:"to_user_id" vd:"$>0;msg:'to_user_id error'"`
+		PreMsgTime int64 `form:"pre_msg_time,optional"`
+	}
+	MessageChatResponse {
+		BaseResponse
+		MessageList []*Message `json:"message_list"`
+	}
+)
+
+type Message {
+	Id         int64  `json:"id"`
+	FromUserId int64  `json:"from_user_id"`
+	ToUserId   int64  `json:"to_user_id"`
+	Content    string `json:"content"`
+	CreateTime int64  `json:"create_time"`
+}
+
+type BaseResponse {
+	Code    int64  `json:"status_code"`
+	Message string `json:"status_msg,omitempty"`
+}

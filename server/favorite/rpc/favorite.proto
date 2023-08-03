@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+service FavoriteRpc {
+    rpc AddFavorite(AddFavoriteRequest) returns (AddFavoriteResponse) {}
+    rpc DelFavorite(DelFavoriteRequest) returns (DelFavoriteResponse) {}
+    rpc GetVideoFavoriteCount(GetVideoFavoriteCountRequest) returns (GetVideoFavoriteCountResponse) {}
+    rpc GetUserFavoriteCount(GetUserFavoriteCountRequest) returns (GetUserFavoriteCountResponse) {}
+    rpc GetUserFavoritedCount(GetUserFavoritedCountRequest) returns (GetUserFavoritedCountResponse) {}
+    rpc IsFavorite(IsFavoriteRequest) returns (IsFavoriteResponse) {}
+}
+
+message AddFavoriteRequest {
+    string user_id = 1;
+    string video_id = 2;
+}
+
+message AddFavoriteResponse {
+
+}
+
+message DelFavoriteRequest {
+    string user_id = 1;
+    string video_id = 2;
+}
+
+message DelFavoriteResponse {
+
+}
+
+message GetVideoFavoriteCountRequest {
+    string video_id = 1;
+}
+
+message GetVideoFavoriteCountResponse {
+    int64 count = 1;
+}
+
+message GetUserFavoriteCountRequest {
+    int64 user_id = 1;
+}
+
+message GetUserFavoriteCountResponse {
+    int64 count = 1;
+}
+
+message GetUserFavoritedCountRequest {
+    int64 user_id = 1;
+}
+
+message GetUserFavoritedCountResponse {
+    int64 count = 1;
+}
+
+message IsFavoriteRequest {
+    string user_id = 1;
+    string video_id = 2;
+}
+
+message IsFavoriteResponse {
+    bool is_favorite = 1;
+}
+

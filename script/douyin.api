@@ -1,0 +1,293 @@
+syntax = "v1"
+
+type (
+	PingRequest {
+	}
+	PingResponse {
+		Pong string `json:"pong"`
+	}
+)
+
+service douyin {
+	@handler Ping
+	get /douyin/ping (PingRequest) returns (PingResponse)
+}
+
+service douyin {
+	@handler UserRegister
+	post /douyin/user/register (UserRegisteRequest) returns (UserRegisterResponse)
+	@handler UserLogin
+	post /douyin/user/login (UserLoginRequest) returns (UserLoginResponse)
+}
+
+@server (
+	middleware : Auth
+)
+service douyin {
+	@handler UserInfo
+	get /douyin/user (UserInfoRequest) returns (UserInfoResponse)
+}
+
+@server(
+	middleware : Auth
+)
+service douyin {
+	@handler MessageAction
+	post /douyin/message/action (MessageActionRequest) returns (MessageActionResponse)
+	@handler MessageList
+	get /douyin/message/chat (MessageListRequest) returns (MessageListResponse)
+	@handler FriendList
+	get /douyin/relation/friend/list (FriendListRequest) returns (FriendListResponse)
+}
+
+@server(
+	middleware : Auth
+)
+service douyin {
+	@handler VideoFeed
+	get /douyin/feed (VideoFeedRequest) returns (VideoFeedResponse)
+	@handler VideoAction
+	post /douyin/publish/action (VideoActionRequest) returns (VideoActionResponse)
+	@handler VideoFavoriteAction
+	post /douyin/favorite/action (VideoFavoriteActionRequest) returns (VideoFavoriteActionResponse)
+	@handler VideoList
+	get /douyin/publish/list (VideoListRequest) returns (VideoListResponse)
+	@handler VideoFavoriteList
+	get /douyin/favorite/list (VideoFavoriteListRequest) returns (VideoFavoriteListResponse)
+	@handler VideoCommentAction
+	post /douyin/comment/action (VideoCommentActionRequest) returns (VideoCommentActionResponse)
+	@handler VideoCommentList
+	get /douyin/comment/list (VideoCommentListRequest) returns (VideoCommentListResponse)
+}
+
+@server(
+	middleware : Auth
+)
+service douyin {
+	@handler RelationAction
+	post /douyin/relation/action (RelationActionRequest) returns (RelationActionResponse)
+	@handler RelationFollowList
+	get /douyin/relation/follow/list (RelationFollowListRequest) returns (RelationFollowListResponse)
+	@handler RelationFollowerList
+	get /douyin/relation/follower/list (RelationFollowerListRequest) returns (RelationFollowerListResponse)
+}
+
+type BaseResponse {
+	Code    int64  `json:"status_code"`
+	Message string `json:"status_msg,omitempty"`
+}
+
+type (
+	RelationActionRequest {
+		ToUserID   int64 `form:"to_user_id" validate:"required"`
+		ActionType int64 `form:"action_type" validate:"required,oneof=1 2"`
+	}
+	RelationActionResponse {
+		BaseResponse
+	}
+)
+
+type (
+	RelationFollowListRequest {
+		UserID int64 `form:"user_id" validate:"required"`
+	}
+	RelationFollowListResponse {
+		BaseResponse
+		UserList []*User `json:"user_list"`
+	}
+)
+
+type (
+	RelationFollowerListRequest {
+		UserID int64 `form:"user_id" validate:"required"`
+	}
+	RelationFollowerListResponse {
+		BaseResponse
+		UserList []*User `json:"user_list"`
+	}
+)
+
+type Video {
+	ID            int64  `json:"id"`
+	Author        *User  `json:"author"`
+	Title         string `json:"title"`
+	PlayURL       string `json:"play_url"`
+	CoverURL      string `json:"cover_url"`
+	FavoriteCount int64  `json:"favorite_count"`
+	CommentCount  int64  `json:"comment_count"`
+	IsFavorite    bool   `json:"is_favorite"`
+}
+
+type (
+	VideoActionRequest {
+		Title string `form:"title"`
+	}
+	VideoActionResponse {
+		BaseResponse
+	}
+)
+type (
+	VideoFeedRequest {
+		LatestTime int64  `form:"latest_time,optional"`
+		Token      string `form:"token,optional"`
+	}
+	VideoFeedResponse {
+		BaseResponse
+		VideoList []*Video `json:"video_list"`
+	}
+)
+
+type (
+	VideoFavoriteActionRequest {
+		VideoID    int64 `form:"video_id"`
+		ActionType int64 `form:"action_type"`
+	}
+	VideoFavoriteActionResponse {
+		BaseResponse
+	}
+)
+
+type (
+	VideoListRequest {
+		UserID int64 `form:"user_id,optional"`
+	}
+	VideoListResponse {
+		BaseResponse
+		VideoList []*Video `json:"video_list"`
+	}
+)
+
+type (
+	VideoFavoriteListRequest {
+		UserID int64 `form:"user_id,optional"`
+	}
+	VideoFavoriteListResponse {
+		BaseResponse
+		VideoList []*Video `json:"video_list"`
+	}
+)
+
+type Comment {
+	ID          int64  `json:"id"`
+	User        *User  `json:"user"`
+	Content     string `json:"content"`
+	Create_date string `json:"create_date"`
+}
+
+type (
+	VideoCommentActionRequest {
+		VideoID     int64  `form:"video_id"`
+		ActionType  int64  `form:"action_type" validate:"required,oneof=1 2"`
+		CommentText string `form:"comment_text,optional"`
+		CommentID   int64  `form:"comment_id,optional"`
+	}
+	VideoCommentActionResponse {
+		BaseResponse
+		Comment *Comment `json:"comment"`
+	}
+)
+
+type (
+	VideoCommentListRequest {
+		VideoID int64 `form:"video_id"`
+	}
+
+	VideoCommentListResponse {
+		BaseResponse
+		CommentList []*Comment `json:"comment_list"`
+	}
+)
+
+type User {
+	ID              int64  `json:"id,string"`
+	Name            string `json:"name"`
+	Avatar          string `json:"avatar"`
+	FollowCount     int64  `json:"follow_count"`
+	TotalFavorited  int64  `json:"total_favorited"`
+	Signature       string `json:"signature"`
+	BackgroundImage string `json:"background_image"`
+	FollowerCount   int64  `json:"follower_count"`
+	WorkCount       int64  `json:"work_count"`
+	FavoriteCount   int64  `json:"favorite_count"`
+	IsFollow        bool   `json:"is_follow"`
+}
+
+type (
+	UserRegisteRequest {
+		Username string `form:"username" validate:"required,min=0,max=32"`
+		Password string `form:"password" validate:"required,min=0,max=32"`
+	}
+	UserRegisterResponse {
+		BaseResponse
+		UserID int64  `json:"user_id"`
+		Token  string `json:"token"`
+	}
+)
+
+type (
+	UserLoginRequest {
+		Username string `form:"username" validate:"required,min=0,max=32"`
+		Password string `form:"password" validate:"required,min=0,max=32"`
+	}
+	UserLoginResponse {
+		BaseResponse
+		UserID int64  `json:"user_id"`
+		Token  string `json:"token"`
+	}
+)
+
+type (
+	UserInfoRequest {
+		UserID int64 `form:"user_id" validate:"required"`
+	}
+	UserInfoResponse {
+		BaseResponse
+		User *User `json:"user"`
+	}
+)
+
+type Message {
+	ID         int64  `json:"id"`
+	FromUserID int64  `json:"from_user_id"`
+	ToUserID   int64  `json:"to_user_id"`
+	Content    string `json:"content"`
+	CreateTime int64  `json:"create_time"`
+}
+
+type FriendUser {
+	User
+	MsgType int64  `json:"msg_type"  validate:"oneof=0 1"`
+	Message string `json:"message,optional"`
+}
+
+type (
+	MessageActionRequest {
+		ToUserID   int64  `form:"to_user_id"`
+		ActionType int64  `form:"action_type" validate:"required,oneof=1"`
+		Content    string `form:"content"`
+	}
+	MessageActionResponse {
+		BaseResponse
+	}
+)
+
+type (
+	MessageListRequest {
+		ToUserID   int64 `form:"to_user_id"`
+		PreMsgTime int64 `form:"pre_msg_time,optional"`
+	}
+	MessageListResponse {
+		BaseResponse
+		MessageList []*Message `json:"message_list"`
+	}
+)
+
+type (
+	FriendListRequest {
+		UserID int64 `form:"user_id"`
+	}
+	FriendListResponse {
+		BaseResponse
+		FriendList []*FriendUser `json:"user_list"`
+	}
+)
