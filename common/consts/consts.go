@@ -5,11 +5,16 @@ const (
 
 	MsgTypeRecv = 0
 	MsgTypeSend = 1
+
+	CommentAdd = 1
+	CommentDel = 2
 )
 
 const (
-	UserMachineId = 1
-	ChatMachineId = 3
+	UserMachineId = iota
+	VideoMachineId
+	ChatMachineId
+	CommentMachineId
 )
 
 const (

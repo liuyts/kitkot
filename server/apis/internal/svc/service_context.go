@@ -7,6 +7,7 @@ import (
 	"kitkot/server/apis/internal/config"
 	"kitkot/server/apis/internal/middleware"
 	"kitkot/server/chat/rpc/chatrpc"
+	"kitkot/server/comment/rpc/commentrpc"
 	"kitkot/server/user/rpc/userrpc"
 )
 
@@ -16,6 +17,7 @@ type ServiceContext struct {
 	RedisClient *redis.Redis
 	ChatRpc     chatrpc.ChatRpc
 	UserRpc     userrpc.UserRpc
+	CommentRpc  commentrpc.CommentRpc
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -27,5 +29,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		RedisClient: redisClient,
 		ChatRpc:     chatrpc.NewChatRpc(zrpc.MustNewClient(c.ChatRpcConf)),
 		UserRpc:     userrpc.NewUserRpc(zrpc.MustNewClient(c.UserRpcConf)),
+		CommentRpc:  commentrpc.NewCommentRpc(zrpc.MustNewClient(c.CommentRpcConf)),
 	}
 }

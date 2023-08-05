@@ -36,6 +36,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/douyin/publish/action",
+					Handler: VideoActionHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/douyin/comment/action",
+					Handler: CommentActionHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/douyin/comment/list",
+					Handler: CommentListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/douyin/message/action",
 					Handler: MessageActionHandler(serverCtx),
 				},

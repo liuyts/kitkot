@@ -1,0 +1,36 @@
+Name: user.rpc
+ListenOn: 0.0.0.0:20001
+
+Mode: dev
+
+Log:
+  Encoding: plain
+
+Etcd:
+  Hosts:
+  - 192.168.21.211:2379
+  Key: user.rpc
+
+MySQLConf:
+  DataSource: root:123456@tcp(127.0.0.1:3306)/douyin_user?charset=utf8mb4&parseTime=True&loc=Local
+
+
+CacheRedis:
+  - Host: 192.168.21.211:6379
+    Pass: "123456"
+
+RedisConf:
+  Host: 192.168.21.211:6379
+  Pass: "123456"
+
+FavoriteRpcConf:
+    Etcd:
+        Hosts:
+            - 192.168.21.211:2379
+        Key: favorite.rpc
+
+RelationRpcConf:
+    Etcd:
+        Hosts:
+            - 192.168.21.211:2379
+        Key: relation.rpc

@@ -7,12 +7,9 @@ import (
 	"github.com/zeromicro/go-zero/core/threading"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"kitkot/common/utils"
 	"kitkot/server/favorite/rpc/favoriterpc"
 	"kitkot/server/relation/rpc/relationrpc"
 	"kitkot/server/user/model"
-	"time"
-
 	"kitkot/server/user/rpc/internal/svc"
 	"kitkot/server/user/rpc/pb"
 
@@ -50,14 +47,24 @@ func (l *UserInfoLogic) UserInfo(in *pb.UserInfoRequest) (resp *pb.UserInfoRespo
 			err = status.Error(codes.NotFound, "用户不存在")
 			return
 		}
+		//resp.User.Id = dbUser.Id
+		//resp.User.Username = dbUser.Username
 		_ = copier.Copy(resp.User, dbUser)
 	})
 
-	group.RunSafe(func() {
-		start := time.Now().UnixMilli()
-		resp.User.Signature = utils.GetYiYan()
-		l.Infof("获取一言用时: %d ms", time.Now().UnixMilli()-start)
-	})
+	//group.RunSafe(func() {
+	//	resp.User.Avatar = utils.GetRandomImageUrl()
+	//})
+	//
+	//group.RunSafe(func() {
+	//	resp.User.BackgroundImage = utils.GetRandomImageUrl()
+	//})
+
+	//group.RunSafe(func() {
+	//	start := time.Now().UnixMilli()
+	//	resp.User.Signature = utils.GetRandomYiYan()
+	//	l.Infof("获取一言用时: %d ms", time.Now().UnixMilli()-start)
+	//})
 
 	group.RunSafe(func() {
 		followCountResp, ierr := l.svcCtx.RelationRpc.GetUserFollowCount(l.ctx, &relationrpc.GetUserFollowCountRequest{

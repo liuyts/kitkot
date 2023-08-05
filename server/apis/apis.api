@@ -14,11 +14,59 @@ service apis {
 	@handler UserInfo
 	get /douyin/user (UserInfoRequest) returns (UserInfoResponse)
 	
+	@handler VideoAction
+	post /douyin/publish/action (VideoActionRequest) returns (VideoActionResponse)
+	
+	@handler CommentAction
+	post /douyin/comment/action (CommentActionRequest) returns (CommentActionResponse)
+	@handler CommentList
+	get /douyin/comment/list (CommentListRequest) returns (CommentListResponse)
+	
 	@handler MessageAction
 	post /douyin/message/action (MessageActionRequest) returns (MessageActionResponse)
 	@handler MessageChat
 	get /douyin/message/chat (MessageChatRequest) returns (MessageChatResponse)
 }
+
+type Comment {
+	Id         int64  `json:"id"`
+	User       *User  `json:"user"`
+	Content    string `json:"content"`
+	CreateDate string `json:"create_date"`
+}
+
+type (
+	CommentActionRequest {
+		VideoId     int64  `form:"video_id" vd:"$>0;msg:'video_id error'"`
+		ActionType  int64  `form:"action_type" vd:"$==1||$==2;msg:'action_type error'"`
+		CommentText string `form:"comment_text,optional"`
+		CommentId   int64  `form:"comment_id,optional"`
+	}
+	CommentActionResponse {
+		BaseResponse
+		Comment *Comment `json:"comment,omitempty"`
+	}
+)
+
+type (
+	CommentListRequest {
+		VideoId int64 `form:"video_id" vd:"$>0;msg:'video_id error'"`
+	}
+
+	CommentListResponse {
+		BaseResponse
+		CommentList []*Comment `json:"comment_list"`
+	}
+)
+
+type (
+	VideoActionRequest {
+		Title string `form:"title"`
+	}
+	VideoActionResponse {
+		BaseResponse
+	}
+)
 
 type (
 	UserInfoRequest {
