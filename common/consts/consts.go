@@ -18,7 +18,7 @@ const (
 )
 
 const (
-	DefaultAvatar          = "https://kitkot.oss-cn-shanghai.aliyuncs.com/default_avatar.png"
+	DefaultAvatar          = "https://avatars.githubusercontent.com/u/1967156"
 	DefaultBackGroundImage = "https://kitkot.oss-cn-shanghai.aliyuncs.com/default_background_image.png"
 	DefaultSignature       = "这个人很懒，什么都没有留下"
 )

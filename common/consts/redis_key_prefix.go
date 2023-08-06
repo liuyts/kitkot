@@ -6,5 +6,6 @@ const (
 	TokenPrefix = ProjectNamePrefix + "token:"
 	TokenTTL    = -1
 
-	LastMessagePrefix = ProjectNamePrefix + "lastMessage:"
+	LastMessagePrefix  = ProjectNamePrefix + "lastMessage:"
+	VideoCommentPrefix = ProjectNamePrefix + "videoComment:"
 )

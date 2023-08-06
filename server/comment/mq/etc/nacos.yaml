@@ -1,0 +1,5 @@
+Host: 192.168.21.211
+Port: 8848
+NamespaceId: 45832d2e-2b63-40c8-a3d5-af975ee6e5dd
+Group: dev
+DataId: comment-mq.yaml
