@@ -28,9 +28,18 @@ FavoriteRpcConf:
         Hosts:
             - 192.168.21.211:2379
         Key: favorite.rpc
+    NonBlock: true
 
 RelationRpcConf:
     Etcd:
         Hosts:
             - 192.168.21.211:2379
         Key: relation.rpc
+    NonBlock: true
+
+VideoRpcConf:
+    Etcd:
+        Hosts:
+            - 192.168.21.211:2379
+        Key: video.rpc
+    NonBlock: true

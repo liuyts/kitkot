@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/zeromicro/go-queue/kq"
 	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/core/logx"
 	"kitkot/server/comment/mq/internal/config"
 	"kitkot/server/comment/mq/internal/service"
 )
@@ -23,6 +24,7 @@ func main() {
 
 	queue := kq.MustNewQueue(c.KafkaConf, kq.WithHandle(s.Consume))
 	defer queue.Stop()
+	logx.Disable()
 
 	fmt.Println("comment-mq started!!!")
 	queue.Start()

@@ -40,7 +40,7 @@ func (l *UserInfoLogic) UserInfo(req *types.UserInfoRequest) (resp *types.UserIn
 
 	resp = new(types.UserInfoResponse)
 	resp.User = new(types.User)
-	copier.Copy(resp.User, userInfoResp.User)
+	_ = copier.Copy(resp.User, userInfoResp.User)
 
 	return
 }

@@ -20,8 +20,7 @@ func (f FavoriteRpc) DelFavorite(ctx context.Context, in *favoriterpc.DelFavorit
 }
 
 func (f FavoriteRpc) GetVideoFavoriteCount(ctx context.Context, in *favoriterpc.GetVideoFavoriteCountRequest, opts ...grpc.CallOption) (*favoriterpc.GetVideoFavoriteCountResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	return &favoriterpc.GetVideoFavoriteCountResponse{Count: 10}, nil
 }
 
 func (f FavoriteRpc) GetUserFavoriteCount(ctx context.Context, in *favoriterpc.GetUserFavoriteCountRequest, opts ...grpc.CallOption) (*favoriterpc.GetUserFavoriteCountResponse, error) {

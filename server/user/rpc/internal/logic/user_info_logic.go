@@ -12,6 +12,7 @@ import (
 	"kitkot/server/user/model"
 	"kitkot/server/user/rpc/internal/svc"
 	"kitkot/server/user/rpc/pb"
+	"kitkot/server/video/rpc/videorpc"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -95,6 +96,10 @@ func (l *UserInfoLogic) UserInfo(in *pb.UserInfoRequest) (resp *pb.UserInfoRespo
 			resp.User.IsFollow = true
 			return
 		}
+		if in.UserId == 0 {
+			resp.User.IsFollow = false
+			return
+		}
 		isFollowResp, ierr := l.svcCtx.RelationRpc.IsFollow(l.ctx, &relationrpc.IsFollowRequest{
 			UserId:       in.UserId,
 			TargetUserId: in.TargetUserId,
@@ -131,12 +136,24 @@ func (l *UserInfoLogic) UserInfo(in *pb.UserInfoRequest) (resp *pb.UserInfoRespo
 		resp.User.TotalFavorited = favoritedCountResp.Count
 	})
 
+	group.RunSafe(func() {
+		UserVideoCountResp, ierr := l.svcCtx.VideoRpc.GetUserVideoCount(l.ctx, &videorpc.GetUserVideoCountRequest{
+			UserId: in.TargetUserId,
+		})
+		if ierr != nil {
+			err = ierr
+			l.Errorf("UserInfo RelationRpc.GetUserVideoCount error: %v", err)
+			return
+		}
+		resp.User.WorkCount = UserVideoCountResp.Count
+	})
+
 	group.Wait()
 
 	if err != nil {
+		l.Errorf("UserInfo error: %v", err)
 		return nil, err
 	}
-	resp.User.WorkCount = 3
 
 	return
 }

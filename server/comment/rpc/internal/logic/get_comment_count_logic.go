@@ -39,6 +39,10 @@ func (l *GetCommentCountLogic) GetCommentCount(in *pb.GetCommentCountRequest) (r
 		}
 
 	} else {
+		if countStr == "" {
+			resp.Count = 0
+			return
+		}
 		count, err = strconv.Atoi(countStr)
 		if err != nil {
 			l.Errorf("Get comment count error: %v", err)

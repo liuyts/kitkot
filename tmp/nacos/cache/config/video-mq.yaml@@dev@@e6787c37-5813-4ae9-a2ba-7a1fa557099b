@@ -1,0 +1,22 @@
+Log:
+    Encoding: plain
+
+MySQLConf:
+  DataSource: root:123456@tcp(127.0.0.1:3306)/douyin_video?charset=utf8mb4&parseTime=True&loc=Local
+
+KafkaConf:
+  Name: kqConsumer
+  Brokers:
+    - 192.168.21.211:9091
+  Group: video-group
+  Topic: video-topic
+  MinBytes: 0
+
+CacheRedis:
+  - Host: 192.168.21.211:6379
+    Pass: "123456"
+
+RedisConf:
+  Host: 192.168.21.211:6379
+  Pass: "123456"
+

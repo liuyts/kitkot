@@ -51,3 +51,8 @@ func (s *FavoriteRpcServer) IsFavorite(ctx context.Context, in *pb.IsFavoriteReq
 	l := logic.NewIsFavoriteLogic(ctx, s.svcCtx)
 	return l.IsFavorite(in)
 }
+
+func (s *FavoriteRpcServer) GetFavoriteVideoIdList(ctx context.Context, in *pb.GetFavoriteVideoIdListRequest) (*pb.GetFavoriteVideoListIdResponse, error) {
+	l := logic.NewGetFavoriteVideoIdListLogic(ctx, s.svcCtx)
+	return l.GetFavoriteVideoIdList(in)
+}

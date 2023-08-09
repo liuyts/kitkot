@@ -8,4 +8,12 @@ const (
 
 	LastMessagePrefix  = ProjectNamePrefix + "lastMessage:"
 	VideoCommentPrefix = ProjectNamePrefix + "videoComment:"
+
+	VideoRankKey        = ProjectNamePrefix + "videoRank"
+	UserVideoRankPrefix = ProjectNamePrefix + "userVideoRank:"
+
+	VideoFavoriteCountPrefix = ProjectNamePrefix + "videoFavoriteCount:"
+	UserFavoriteIdPrefix     = ProjectNamePrefix + "userFavoriteId:"
+	VideoFavoritedIdPrefix   = ProjectNamePrefix + "videoFavoritedId:"
+	UserFavoritedCountPrefix = ProjectNamePrefix + "userFavoritedCount:"
 )

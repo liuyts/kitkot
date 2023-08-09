@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"kitkot/common/consts"
+	"strconv"
 
 	"kitkot/server/favorite/rpc/internal/svc"
 	"kitkot/server/favorite/rpc/pb"
@@ -24,9 +26,25 @@ func NewGetUserFavoritedCountLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *GetUserFavoritedCountLogic) GetUserFavoritedCount(in *pb.GetUserFavoritedCountRequest) (resp *pb.GetUserFavoritedCountResponse, err error) {
-	// todo: add your logic here and delete this line
 
+	userIdStr := strconv.Itoa(int(in.UserId))
 	resp = new(pb.GetUserFavoritedCountResponse)
+	countStr, err := l.svcCtx.RedisClient.GetCtx(l.ctx, consts.UserFavoritedCountPrefix+userIdStr)
+	if err != nil {
+		l.Errorf("RedisClient GetCtx error: %v", err)
+		return
+	}
+	if countStr == "" {
+		resp.Count = 0
+		return
+	}
+
+	count, err := strconv.Atoi(countStr)
+	if err != nil {
+		l.Errorf("strconv.Atoi error: %v", err)
+		return
+	}
+	resp.Count = int64(count)
 
 	return
 }

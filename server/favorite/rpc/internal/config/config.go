@@ -13,7 +13,7 @@ type Config struct {
 		DataSource string
 	}
 
-	CacheRedis cache.CacheConf
-
-	RedisConf redis.RedisConf
+	CacheRedis   cache.CacheConf
+	RedisConf    redis.RedisConf
+	VideoRpcConf zrpc.RpcClientConf
 }

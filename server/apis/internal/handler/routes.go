@@ -40,6 +40,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: VideoActionHandler(serverCtx),
 				},
 				{
+					Method:  http.MethodGet,
+					Path:    "/douyin/publish/list",
+					Handler: VideoListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/douyin/favorite/action",
+					Handler: FavoriteActionHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/douyin/favorite/list",
+					Handler: FavoriteListHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodPost,
 					Path:    "/douyin/comment/action",
 					Handler: CommentActionHandler(serverCtx),
@@ -58,6 +73,39 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/douyin/message/chat",
 					Handler: MessageChatHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/douyin/relation/action",
+					Handler: RelationActionHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/douyin/relation/follow/list",
+					Handler: RelationFollowListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/douyin/relation/follower/list",
+					Handler: RelationFollowerListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/douyin/relation/friend/list",
+					Handler: FriendListHandler(serverCtx),
+				},
+			}...,
+		),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.AuthFeed},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/douyin/feed",
+					Handler: VideoFeedHandler(serverCtx),
 				},
 			}...,
 		),

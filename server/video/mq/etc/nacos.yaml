@@ -1,0 +1,5 @@
+Host: 192.168.21.211
+Port: 8848
+NamespaceId: e6787c37-5813-4ae9-a2ba-7a1fa557099b
+Group: dev
+DataId: video-mq.yaml

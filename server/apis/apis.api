@@ -16,6 +16,13 @@ service apis {
 	
 	@handler VideoAction
 	post /douyin/publish/action (VideoActionRequest) returns (VideoActionResponse)
+	@handler VideoList
+	get /douyin/publish/list (VideoListRequest) returns (VideoListResponse)
+	
+	@handler FavoriteAction
+	post /douyin/favorite/action (FavoriteActionRequest) returns (FavoriteActionResponse)
+	@handler FavoriteList
+	get /douyin/favorite/list (FavoriteListRequest) returns (FavoriteListResponse)
 	
 	@handler CommentAction
 	post /douyin/comment/action (CommentActionRequest) returns (CommentActionResponse)
@@ -26,6 +33,122 @@ service apis {
 	post /douyin/message/action (MessageActionRequest) returns (MessageActionResponse)
 	@handler MessageChat
 	get /douyin/message/chat (MessageChatRequest) returns (MessageChatResponse)
+	
+	@handler RelationAction
+	post /douyin/relation/action (RelationActionRequest) returns (RelationActionResponse)
+	@handler RelationFollowList
+	get /douyin/relation/follow/list (RelationFollowListRequest) returns (RelationFollowListResponse)
+	@handler RelationFollowerList
+	get /douyin/relation/follower/list (RelationFollowerListRequest) returns (RelationFollowerListResponse)
+	@handler FriendList
+	get /douyin/relation/friend/list (FriendListRequest) returns (FriendListResponse)
+}
+
+@server (
+	middleware : AuthFeed
+)
+service apis {
+	@handler VideoFeed
+	get /douyin/feed (VideoFeedRequest) returns (VideoFeedResponse)
+}
+
+type (
+	RelationActionRequest {
+		ToUserId   int64 `form:"to_user_id" vd:"$>0;msg:'to_user_id error'"`
+		ActionType int64 `form:"action_type" vd:"$==1||$==2;msg:'action_type error'"`
+	}
+	RelationActionResponse {
+		BaseResponse
+	}
+)
+
+type (
+	RelationFollowListRequest {
+		UserId int64 `form:"user_id"`
+	}
+	RelationFollowListResponse {
+		BaseResponse
+		UserList []*User `json:"user_list"`
+	}
+)
+
+type (
+	RelationFollowerListRequest {
+		UserId int64 `form:"user_id"`
+	}
+	RelationFollowerListResponse {
+		BaseResponse
+		UserList []*User `json:"user_list"`
+	}
+)
+
+type (
+	FriendListRequest {
+		UserId int64 `form:"user_id" vd:"$>0;msg:'user_id error'"`
+	}
+	FriendListResponse {
+		BaseResponse
+		FriendList []*FriendUser `json:"user_list"`
+	}
+)
+
+type FriendUser {
+	User
+	MsgType int64  `json:"msg_type"  validate:"oneof=0 1"`
+	Message string `json:"message,optional"`
+}
+
+type (
+	FavoriteListRequest {
+		UserId int64 `form:"user_id" vd:"$>0;msg:'user_id error'"`
+	}
+	FavoriteListResponse {
+		BaseResponse
+		VideoList []*Video `json:"video_list"`
+	}
+)
+
+type (
+	FavoriteActionRequest {
+		VideoId    int64 `form:"video_id" vd:"$>0;msg:'video_id error'"`
+		ActionType int64 `form:"action_type" vd:"$==1||$==2;msg:'action_type error'"`
+	}
+	FavoriteActionResponse {
+		BaseResponse
+	}
+)
+
+type (
+	VideoFeedRequest {
+		LatestTime int64  `form:"latest_time,optional"`
+		Token      string `form:"token,optional"`
+	}
+	VideoFeedResponse {
+		BaseResponse
+		NextTime  int64    `json:"next_time"`
+		VideoList []*Video `json:"video_list"`
+	}
+)
+
+type (
+	VideoListRequest {
+		UserId int64 `form:"user_id,optional" vd:"$>0;msg:'user_id error'"`
+	}
+	VideoListResponse {
+		BaseResponse
+		VideoList []*Video `json:"video_list"`
+	}
+)
+
+type Video {
+	Id            int64  `json:"id"`
+	Author        *User  `json:"author" copier:"User"`
+	Title         string `json:"title"`
+	PlayUrl       string `json:"play_url"`
+	CoverUrl      string `json:"cover_url"`
+	FavoriteCount int64  `json:"favorite_count"`
+	CommentCount  int64  `json:"comment_count"`
+	IsFavorite    bool   `json:"is_favorite"`
 }
 
 type Comment {

@@ -19,12 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	FavoriteRpc_AddFavorite_FullMethodName           = "/FavoriteRpc/AddFavorite"
-	FavoriteRpc_DelFavorite_FullMethodName           = "/FavoriteRpc/DelFavorite"
-	FavoriteRpc_GetVideoFavoriteCount_FullMethodName = "/FavoriteRpc/GetVideoFavoriteCount"
-	FavoriteRpc_GetUserFavoriteCount_FullMethodName  = "/FavoriteRpc/GetUserFavoriteCount"
-	FavoriteRpc_GetUserFavoritedCount_FullMethodName = "/FavoriteRpc/GetUserFavoritedCount"
-	FavoriteRpc_IsFavorite_FullMethodName            = "/FavoriteRpc/IsFavorite"
+	FavoriteRpc_AddFavorite_FullMethodName            = "/favorite.FavoriteRpc/AddFavorite"
+	FavoriteRpc_DelFavorite_FullMethodName            = "/favorite.FavoriteRpc/DelFavorite"
+	FavoriteRpc_GetVideoFavoriteCount_FullMethodName  = "/favorite.FavoriteRpc/GetVideoFavoriteCount"
+	FavoriteRpc_GetUserFavoriteCount_FullMethodName   = "/favorite.FavoriteRpc/GetUserFavoriteCount"
+	FavoriteRpc_GetUserFavoritedCount_FullMethodName  = "/favorite.FavoriteRpc/GetUserFavoritedCount"
+	FavoriteRpc_IsFavorite_FullMethodName             = "/favorite.FavoriteRpc/IsFavorite"
+	FavoriteRpc_GetFavoriteVideoIdList_FullMethodName = "/favorite.FavoriteRpc/GetFavoriteVideoIdList"
 )
 
 // FavoriteRpcClient is the client API for FavoriteRpc service.
@@ -37,6 +38,7 @@ type FavoriteRpcClient interface {
 	GetUserFavoriteCount(ctx context.Context, in *GetUserFavoriteCountRequest, opts ...grpc.CallOption) (*GetUserFavoriteCountResponse, error)
 	GetUserFavoritedCount(ctx context.Context, in *GetUserFavoritedCountRequest, opts ...grpc.CallOption) (*GetUserFavoritedCountResponse, error)
 	IsFavorite(ctx context.Context, in *IsFavoriteRequest, opts ...grpc.CallOption) (*IsFavoriteResponse, error)
+	GetFavoriteVideoIdList(ctx context.Context, in *GetFavoriteVideoIdListRequest, opts ...grpc.CallOption) (*GetFavoriteVideoListIdResponse, error)
 }
 
 type favoriteRpcClient struct {
@@ -101,6 +103,15 @@ func (c *favoriteRpcClient) IsFavorite(ctx context.Context, in *IsFavoriteReques
 	return out, nil
 }
 
+func (c *favoriteRpcClient) GetFavoriteVideoIdList(ctx context.Context, in *GetFavoriteVideoIdListRequest, opts ...grpc.CallOption) (*GetFavoriteVideoListIdResponse, error) {
+	out := new(GetFavoriteVideoListIdResponse)
+	err := c.cc.Invoke(ctx, FavoriteRpc_GetFavoriteVideoIdList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FavoriteRpcServer is the server API for FavoriteRpc service.
 // All implementations must embed UnimplementedFavoriteRpcServer
 // for forward compatibility
@@ -111,6 +122,7 @@ type FavoriteRpcServer interface {
 	GetUserFavoriteCount(context.Context, *GetUserFavoriteCountRequest) (*GetUserFavoriteCountResponse, error)
 	GetUserFavoritedCount(context.Context, *GetUserFavoritedCountRequest) (*GetUserFavoritedCountResponse, error)
 	IsFavorite(context.Context, *IsFavoriteRequest) (*IsFavoriteResponse, error)
+	GetFavoriteVideoIdList(context.Context, *GetFavoriteVideoIdListRequest) (*GetFavoriteVideoListIdResponse, error)
 	mustEmbedUnimplementedFavoriteRpcServer()
 }
 
@@ -135,6 +147,9 @@ func (UnimplementedFavoriteRpcServer) GetUserFavoritedCount(context.Context, *Ge
 }
 func (UnimplementedFavoriteRpcServer) IsFavorite(context.Context, *IsFavoriteRequest) (*IsFavoriteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsFavorite not implemented")
+}
+func (UnimplementedFavoriteRpcServer) GetFavoriteVideoIdList(context.Context, *GetFavoriteVideoIdListRequest) (*GetFavoriteVideoListIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFavoriteVideoIdList not implemented")
 }
 func (UnimplementedFavoriteRpcServer) mustEmbedUnimplementedFavoriteRpcServer() {}
 
@@ -257,11 +272,29 @@ func _FavoriteRpc_IsFavorite_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FavoriteRpc_GetFavoriteVideoIdList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFavoriteVideoIdListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FavoriteRpcServer).GetFavoriteVideoIdList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FavoriteRpc_GetFavoriteVideoIdList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FavoriteRpcServer).GetFavoriteVideoIdList(ctx, req.(*GetFavoriteVideoIdListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FavoriteRpc_ServiceDesc is the grpc.ServiceDesc for FavoriteRpc service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var FavoriteRpc_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "FavoriteRpc",
+	ServiceName: "favorite.FavoriteRpc",
 	HandlerType: (*FavoriteRpcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -287,6 +320,10 @@ var FavoriteRpc_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsFavorite",
 			Handler:    _FavoriteRpc_IsFavorite_Handler,
+		},
+		{
+			MethodName: "GetFavoriteVideoIdList",
+			Handler:    _FavoriteRpc_GetFavoriteVideoIdList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -13,18 +13,20 @@ import (
 )
 
 type (
-	AddFavoriteRequest            = pb.AddFavoriteRequest
-	AddFavoriteResponse           = pb.AddFavoriteResponse
-	DelFavoriteRequest            = pb.DelFavoriteRequest
-	DelFavoriteResponse           = pb.DelFavoriteResponse
-	GetUserFavoriteCountRequest   = pb.GetUserFavoriteCountRequest
-	GetUserFavoriteCountResponse  = pb.GetUserFavoriteCountResponse
-	GetUserFavoritedCountRequest  = pb.GetUserFavoritedCountRequest
-	GetUserFavoritedCountResponse = pb.GetUserFavoritedCountResponse
-	GetVideoFavoriteCountRequest  = pb.GetVideoFavoriteCountRequest
-	GetVideoFavoriteCountResponse = pb.GetVideoFavoriteCountResponse
-	IsFavoriteRequest             = pb.IsFavoriteRequest
-	IsFavoriteResponse            = pb.IsFavoriteResponse
+	AddFavoriteRequest             = pb.AddFavoriteRequest
+	AddFavoriteResponse            = pb.AddFavoriteResponse
+	DelFavoriteRequest             = pb.DelFavoriteRequest
+	DelFavoriteResponse            = pb.DelFavoriteResponse
+	GetFavoriteVideoIdListRequest  = pb.GetFavoriteVideoIdListRequest
+	GetFavoriteVideoListIdResponse = pb.GetFavoriteVideoListIdResponse
+	GetUserFavoriteCountRequest    = pb.GetUserFavoriteCountRequest
+	GetUserFavoriteCountResponse   = pb.GetUserFavoriteCountResponse
+	GetUserFavoritedCountRequest   = pb.GetUserFavoritedCountRequest
+	GetUserFavoritedCountResponse  = pb.GetUserFavoritedCountResponse
+	GetVideoFavoriteCountRequest   = pb.GetVideoFavoriteCountRequest
+	GetVideoFavoriteCountResponse  = pb.GetVideoFavoriteCountResponse
+	IsFavoriteRequest              = pb.IsFavoriteRequest
+	IsFavoriteResponse             = pb.IsFavoriteResponse
 
 	FavoriteRpc interface {
 		AddFavorite(ctx context.Context, in *AddFavoriteRequest, opts ...grpc.CallOption) (*AddFavoriteResponse, error)
@@ -33,6 +35,7 @@ type (
 		GetUserFavoriteCount(ctx context.Context, in *GetUserFavoriteCountRequest, opts ...grpc.CallOption) (*GetUserFavoriteCountResponse, error)
 		GetUserFavoritedCount(ctx context.Context, in *GetUserFavoritedCountRequest, opts ...grpc.CallOption) (*GetUserFavoritedCountResponse, error)
 		IsFavorite(ctx context.Context, in *IsFavoriteRequest, opts ...grpc.CallOption) (*IsFavoriteResponse, error)
+		GetFavoriteVideoIdList(ctx context.Context, in *GetFavoriteVideoIdListRequest, opts ...grpc.CallOption) (*GetFavoriteVideoListIdResponse, error)
 	}
 
 	defaultFavoriteRpc struct {
@@ -74,4 +77,9 @@ func (m *defaultFavoriteRpc) GetUserFavoritedCount(ctx context.Context, in *GetU
 func (m *defaultFavoriteRpc) IsFavorite(ctx context.Context, in *IsFavoriteRequest, opts ...grpc.CallOption) (*IsFavoriteResponse, error) {
 	client := pb.NewFavoriteRpcClient(m.cli.Conn())
 	return client.IsFavorite(ctx, in, opts...)
+}
+
+func (m *defaultFavoriteRpc) GetFavoriteVideoIdList(ctx context.Context, in *GetFavoriteVideoIdListRequest, opts ...grpc.CallOption) (*GetFavoriteVideoListIdResponse, error) {
+	client := pb.NewFavoriteRpcClient(m.cli.Conn())
+	return client.GetFavoriteVideoIdList(ctx, in, opts...)
 }
