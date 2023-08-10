@@ -56,5 +56,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		MinioClient: minioClient,
 		Snowflake:   snowflakeNode,
 		FavoriteRpc: favoriterpc.NewFavoriteRpc(zrpc.MustNewClient(c.FavoriteRpcConf)),
+		RelationRpc: relationrpc.NewRelationRpc(zrpc.MustNewClient(c.RelationRpcConf)),
 	}
 }

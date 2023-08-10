@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"kitkot/common/consts"
+	"kitkot/server/relation/rpc/relationrpc"
 
 	"kitkot/server/apis/internal/svc"
 	"kitkot/server/apis/internal/types"
@@ -24,9 +26,15 @@ func NewRelationActionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Re
 }
 
 func (l *RelationActionLogic) RelationAction(req *types.RelationActionRequest) (resp *types.RelationActionResponse, err error) {
-	// todo: add your logic here and delete this line
-
+	userId := l.ctx.Value(consts.UserId).(int64)
 	resp = new(types.RelationActionResponse)
+	_, err = l.svcCtx.RelationRpc.FollowAction(l.ctx, &relationrpc.FollowActionRequest{
+		UserId:     userId,
+		ToUserId:   req.ToUserId,
+		ActionType: req.ActionType,
+	})
+
+	resp.Message = "success"
 
 	return
 }

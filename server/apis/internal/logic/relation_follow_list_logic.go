@@ -2,6 +2,9 @@ package logic
 
 import (
 	"context"
+	"github.com/jinzhu/copier"
+	"kitkot/common/consts"
+	"kitkot/server/relation/rpc/relationrpc"
 
 	"kitkot/server/apis/internal/svc"
 	"kitkot/server/apis/internal/types"
@@ -24,9 +27,17 @@ func NewRelationFollowListLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *RelationFollowListLogic) RelationFollowList(req *types.RelationFollowListRequest) (resp *types.RelationFollowListResponse, err error) {
-	// todo: add your logic here and delete this line
-
+	userId := l.ctx.Value(consts.UserId).(int64)
 	resp = new(types.RelationFollowListResponse)
+	followListResp, err := l.svcCtx.RelationRpc.GetFollowList(l.ctx, &relationrpc.GetFollowListRequest{
+		UserId:   userId,
+		ToUserId: req.UserId,
+	})
+	if err != nil {
+		return
+	}
 
+	resp.UserList = make([]*types.User, 0, len(followListResp.UserList))
+	_ = copier.Copy(&resp.UserList, &followListResp.UserList)
 	return
 }

@@ -37,7 +37,7 @@ func (l *DelCommentLogic) DelComment(in *pb.DelCommentRequest) (resp *pb.DelComm
 		return nil, errors.New("评论不存在")
 	}
 
-	_, err = l.svcCtx.RedisClient.DecrCtx(l.ctx, consts.VideoCommentPrefix+strconv.Itoa(int(comment.VideoId)))
+	_, err = l.svcCtx.RedisClient.DecrCtx(l.ctx, consts.VideoCommentCountPrefix+strconv.Itoa(int(comment.VideoId)))
 	if err != nil {
 		l.Errorf("Delete comment error: %v", err)
 		return

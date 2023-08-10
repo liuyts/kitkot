@@ -39,9 +39,9 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterRequest) (resp *pb.U
 		return
 	}
 
-	userId := l.svcCtx.Snowflake.Generate().Int64()
+	id := l.svcCtx.Snowflake.Generate().Int64()
 	_, err = l.svcCtx.UserModel.Insert(l.ctx, &model.User{
-		Id:              l.svcCtx.Snowflake.Generate().Int64(),
+		Id:              id,
 		Username:        in.Username,
 		Password:        utils.EncryptPassword(in.Password),
 		Avatar:          consts.DefaultAvatar,
@@ -54,7 +54,7 @@ func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterRequest) (resp *pb.U
 	}
 
 	resp = new(pb.UserRegisterResponse)
-	resp.UserId = userId
+	resp.UserId = id
 
 	return
 }

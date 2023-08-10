@@ -11,7 +11,7 @@ type RelationActionResponse struct {
 }
 
 type RelationFollowListRequest struct {
-	UserId int64 `form:"user_id"`
+	UserId int64 `form:"user_id" vd:"$>0;msg:'user_id error'"`
 }
 
 type RelationFollowListResponse struct {
@@ -20,7 +20,7 @@ type RelationFollowListResponse struct {
 }
 
 type RelationFollowerListRequest struct {
-	UserId int64 `form:"user_id"`
+	UserId int64 `form:"user_id" vd:"$>0;msg:'user_id error'"`
 }
 
 type RelationFollowerListResponse struct {

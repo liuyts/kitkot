@@ -9,7 +9,7 @@ import (
 	"kitkot/server/apis/internal/types"
 )
 
-func FriendListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func RelationFriendListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.FriendListRequest
 		if err := httpx.Parse(r, &req); err != nil {
@@ -17,8 +17,8 @@ func FriendListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := logic.NewFriendListLogic(r.Context(), svcCtx)
-		resp, err := l.FriendList(&req)
+		l := logic.NewRelationFriendListLogic(r.Context(), svcCtx)
+		resp, err := l.RelationFriendList(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

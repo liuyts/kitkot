@@ -6,7 +6,6 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/zrpc"
 	"kitkot/common/consts"
-	mock2 "kitkot/common/mock"
 	"kitkot/server/favorite/rpc/favoriterpc"
 	"kitkot/server/relation/rpc/relationrpc"
 	"kitkot/server/user/model"
@@ -35,8 +34,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Snowflake:   snowflakeNode,
 		RedisClient: redis.MustNewRedis(c.RedisConf),
 		UserModel:   model.NewUserModel(mysqlConn),
-		//RelationRpc: relationrpc.NewRelationRpc(zrpc.MustNewClient(c.RelationRpcConf)),
-		RelationRpc: mock2.NewRelationRpc(),
+		RelationRpc: relationrpc.NewRelationRpc(zrpc.MustNewClient(c.RelationRpcConf)),
 		FavoriteRpc: favoriterpc.NewFavoriteRpc(zrpc.MustNewClient(c.FavoriteRpcConf)),
 		VideoRpc:    videorpc.NewVideoRpc(zrpc.MustNewClient(c.VideoRpcConf)),
 	}

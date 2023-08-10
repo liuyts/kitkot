@@ -28,7 +28,7 @@ func NewGetCommentCountLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 func (l *GetCommentCountLogic) GetCommentCount(in *pb.GetCommentCountRequest) (resp *pb.GetCommentCountResponse, err error) {
 	resp = new(pb.GetCommentCountResponse)
 	var count int
-	countStr, err := l.svcCtx.RedisClient.GetCtx(l.ctx, consts.VideoCommentPrefix+strconv.Itoa(int(in.VideoId)))
+	countStr, err := l.svcCtx.RedisClient.GetCtx(l.ctx, consts.VideoCommentCountPrefix+strconv.Itoa(int(in.VideoId)))
 	if err != nil {
 		l.Errorf("Get comment count error: %v", err)
 		// redis出错，从数据库中获取数量

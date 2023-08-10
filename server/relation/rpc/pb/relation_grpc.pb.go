@@ -19,22 +19,20 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	RelationRpc_AddFollow_FullMethodName            = "/RelationRpc/AddFollow"
-	RelationRpc_DelFollow_FullMethodName            = "/RelationRpc/DelFollow"
-	RelationRpc_GetFollowList_FullMethodName        = "/RelationRpc/GetFollowList"
-	RelationRpc_GetFollowerList_FullMethodName      = "/RelationRpc/GetFollowerList"
-	RelationRpc_GetUserFollowCount_FullMethodName   = "/RelationRpc/GetUserFollowCount"
-	RelationRpc_GetUserFollowerCount_FullMethodName = "/RelationRpc/GetUserFollowerCount"
-	RelationRpc_GetFriendList_FullMethodName        = "/RelationRpc/GetFriendList"
-	RelationRpc_IsFollow_FullMethodName             = "/RelationRpc/IsFollow"
+	RelationRpc_FollowAction_FullMethodName         = "/relation.RelationRpc/FollowAction"
+	RelationRpc_GetFollowList_FullMethodName        = "/relation.RelationRpc/GetFollowList"
+	RelationRpc_GetFollowerList_FullMethodName      = "/relation.RelationRpc/GetFollowerList"
+	RelationRpc_GetUserFollowCount_FullMethodName   = "/relation.RelationRpc/GetUserFollowCount"
+	RelationRpc_GetUserFollowerCount_FullMethodName = "/relation.RelationRpc/GetUserFollowerCount"
+	RelationRpc_GetFriendList_FullMethodName        = "/relation.RelationRpc/GetFriendList"
+	RelationRpc_IsFollow_FullMethodName             = "/relation.RelationRpc/IsFollow"
 )
 
 // RelationRpcClient is the client API for RelationRpc service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RelationRpcClient interface {
-	AddFollow(ctx context.Context, in *AddFollowRequest, opts ...grpc.CallOption) (*AddFollowResponse, error)
-	DelFollow(ctx context.Context, in *DelFollowRequest, opts ...grpc.CallOption) (*DelFollowResponse, error)
+	FollowAction(ctx context.Context, in *FollowActionRequest, opts ...grpc.CallOption) (*FollowActionResponse, error)
 	GetFollowList(ctx context.Context, in *GetFollowListRequest, opts ...grpc.CallOption) (*GetFollowListResponse, error)
 	GetFollowerList(ctx context.Context, in *GetFollowerListRequest, opts ...grpc.CallOption) (*GetFollowerListResponse, error)
 	GetUserFollowCount(ctx context.Context, in *GetUserFollowCountRequest, opts ...grpc.CallOption) (*GetUserFollowCountResponse, error)
@@ -51,18 +49,9 @@ func NewRelationRpcClient(cc grpc.ClientConnInterface) RelationRpcClient {
 	return &relationRpcClient{cc}
 }
 
-func (c *relationRpcClient) AddFollow(ctx context.Context, in *AddFollowRequest, opts ...grpc.CallOption) (*AddFollowResponse, error) {
-	out := new(AddFollowResponse)
-	err := c.cc.Invoke(ctx, RelationRpc_AddFollow_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *relationRpcClient) DelFollow(ctx context.Context, in *DelFollowRequest, opts ...grpc.CallOption) (*DelFollowResponse, error) {
-	out := new(DelFollowResponse)
-	err := c.cc.Invoke(ctx, RelationRpc_DelFollow_FullMethodName, in, out, opts...)
+func (c *relationRpcClient) FollowAction(ctx context.Context, in *FollowActionRequest, opts ...grpc.CallOption) (*FollowActionResponse, error) {
+	out := new(FollowActionResponse)
+	err := c.cc.Invoke(ctx, RelationRpc_FollowAction_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -127,8 +116,7 @@ func (c *relationRpcClient) IsFollow(ctx context.Context, in *IsFollowRequest, o
 // All implementations must embed UnimplementedRelationRpcServer
 // for forward compatibility
 type RelationRpcServer interface {
-	AddFollow(context.Context, *AddFollowRequest) (*AddFollowResponse, error)
-	DelFollow(context.Context, *DelFollowRequest) (*DelFollowResponse, error)
+	FollowAction(context.Context, *FollowActionRequest) (*FollowActionResponse, error)
 	GetFollowList(context.Context, *GetFollowListRequest) (*GetFollowListResponse, error)
 	GetFollowerList(context.Context, *GetFollowerListRequest) (*GetFollowerListResponse, error)
 	GetUserFollowCount(context.Context, *GetUserFollowCountRequest) (*GetUserFollowCountResponse, error)
@@ -142,11 +130,8 @@ type RelationRpcServer interface {
 type UnimplementedRelationRpcServer struct {
 }
 
-func (UnimplementedRelationRpcServer) AddFollow(context.Context, *AddFollowRequest) (*AddFollowResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddFollow not implemented")
-}
-func (UnimplementedRelationRpcServer) DelFollow(context.Context, *DelFollowRequest) (*DelFollowResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DelFollow not implemented")
+func (UnimplementedRelationRpcServer) FollowAction(context.Context, *FollowActionRequest) (*FollowActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FollowAction not implemented")
 }
 func (UnimplementedRelationRpcServer) GetFollowList(context.Context, *GetFollowListRequest) (*GetFollowListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFollowList not implemented")
@@ -179,38 +164,20 @@ func RegisterRelationRpcServer(s grpc.ServiceRegistrar, srv RelationRpcServer) {
 	s.RegisterService(&RelationRpc_ServiceDesc, srv)
 }
 
-func _RelationRpc_AddFollow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddFollowRequest)
+func _RelationRpc_FollowAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FollowActionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RelationRpcServer).AddFollow(ctx, in)
+		return srv.(RelationRpcServer).FollowAction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RelationRpc_AddFollow_FullMethodName,
+		FullMethod: RelationRpc_FollowAction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RelationRpcServer).AddFollow(ctx, req.(*AddFollowRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _RelationRpc_DelFollow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DelFollowRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RelationRpcServer).DelFollow(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RelationRpc_DelFollow_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RelationRpcServer).DelFollow(ctx, req.(*DelFollowRequest))
+		return srv.(RelationRpcServer).FollowAction(ctx, req.(*FollowActionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -327,16 +294,12 @@ func _RelationRpc_IsFollow_Handler(srv interface{}, ctx context.Context, dec fun
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var RelationRpc_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "RelationRpc",
+	ServiceName: "relation.RelationRpc",
 	HandlerType: (*RelationRpcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "AddFollow",
-			Handler:    _RelationRpc_AddFollow_Handler,
-		},
-		{
-			MethodName: "DelFollow",
-			Handler:    _RelationRpc_DelFollow_Handler,
+			MethodName: "FollowAction",
+			Handler:    _RelationRpc_FollowAction_Handler,
 		},
 		{
 			MethodName: "GetFollowList",

@@ -3,6 +3,8 @@ package consts
 const (
 	UserId = "user_id"
 
+	MessageSend = 1
+
 	MsgTypeRecv = 0
 	MsgTypeSend = 1
 
@@ -11,6 +13,9 @@ const (
 
 	FavoriteAdd = 1
 	FavoriteDel = 2
+
+	FollowAdd = 1
+	FollowDel = 2
 )
 
 const (
@@ -30,6 +35,4 @@ const (
 const (
 	FilePath    = "D:/Desktop/douyin-file"
 	FileTmpPath = FilePath + "/tmp"
-	ImagePath   = FilePath + "/images"
-	VideoPath   = FilePath + "/videos"
 )

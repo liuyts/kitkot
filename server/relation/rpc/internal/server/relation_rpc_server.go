@@ -22,14 +22,9 @@ func NewRelationRpcServer(svcCtx *svc.ServiceContext) *RelationRpcServer {
 	}
 }
 
-func (s *RelationRpcServer) AddFollow(ctx context.Context, in *pb.AddFollowRequest) (*pb.AddFollowResponse, error) {
-	l := logic.NewAddFollowLogic(ctx, s.svcCtx)
-	return l.AddFollow(in)
-}
-
-func (s *RelationRpcServer) DelFollow(ctx context.Context, in *pb.DelFollowRequest) (*pb.DelFollowResponse, error) {
-	l := logic.NewDelFollowLogic(ctx, s.svcCtx)
-	return l.DelFollow(in)
+func (s *RelationRpcServer) FollowAction(ctx context.Context, in *pb.FollowActionRequest) (*pb.FollowActionResponse, error) {
+	l := logic.NewFollowActionLogic(ctx, s.svcCtx)
+	return l.FollowAction(in)
 }
 
 func (s *RelationRpcServer) GetFollowList(ctx context.Context, in *pb.GetFollowListRequest) (*pb.GetFollowListResponse, error) {

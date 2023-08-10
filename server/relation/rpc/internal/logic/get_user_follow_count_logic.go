@@ -2,6 +2,8 @@ package logic
 
 import (
 	"context"
+	"kitkot/common/consts"
+	"strconv"
 
 	"kitkot/server/relation/rpc/internal/svc"
 	"kitkot/server/relation/rpc/pb"
@@ -24,9 +26,14 @@ func NewGetUserFollowCountLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 }
 
 func (l *GetUserFollowCountLogic) GetUserFollowCount(in *pb.GetUserFollowCountRequest) (resp *pb.GetUserFollowCountResponse, err error) {
-	// todo: add your logic here and delete this line
-
 	resp = new(pb.GetUserFollowCountResponse)
+	userIdStr := strconv.FormatInt(in.UserId, 10)
+	count, err := l.svcCtx.RedisClient.ScardCtx(l.ctx, consts.UserFollowPrefix+userIdStr)
+	if err != nil {
+		l.Errorf("redis scard err: %v", err)
+		return nil, err
+	}
+	resp.Count = count
 
 	return
 }

@@ -92,7 +92,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				{
 					Method:  http.MethodGet,
 					Path:    "/douyin/relation/friend/list",
-					Handler: FriendListHandler(serverCtx),
+					Handler: RelationFriendListHandler(serverCtx),
 				},
 			}...,
 		),

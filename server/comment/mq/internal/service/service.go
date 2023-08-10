@@ -41,7 +41,7 @@ func (s *Service) Consume(_ string, value string) error {
 	}
 
 	// 视频评论数+1
-	res, err := s.RedisClient.Incr(consts.VideoCommentPrefix + strconv.Itoa(int(comment.VideoId)))
+	res, err := s.RedisClient.Incr(consts.VideoCommentCountPrefix + strconv.Itoa(int(comment.VideoId)))
 	if err != nil {
 		logx.Errorf("MessageAction RedisClient.Incr error: %s", err.Error())
 		return err

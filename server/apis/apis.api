@@ -40,7 +40,7 @@ service apis {
 	get /douyin/relation/follow/list (RelationFollowListRequest) returns (RelationFollowListResponse)
 	@handler RelationFollowerList
 	get /douyin/relation/follower/list (RelationFollowerListRequest) returns (RelationFollowerListResponse)
-	@handler FriendList
+	@handler RelationFriendList
 	get /douyin/relation/friend/list (FriendListRequest) returns (FriendListResponse)
 }
 
@@ -64,7 +64,7 @@ type (
 
 type (
 	RelationFollowListRequest {
-		UserId int64 `form:"user_id"`
+		UserId int64 `form:"user_id" vd:"$>0;msg:'user_id error'"`
 	}
 	RelationFollowListResponse {
 		BaseResponse
@@ -74,7 +74,7 @@ type (
 
 type (
 	RelationFollowerListRequest {
-		UserId int64 `form:"user_id"`
+		UserId int64 `form:"user_id" vd:"$>0;msg:'user_id error'"`
 	}
 	RelationFollowerListResponse {
 		BaseResponse

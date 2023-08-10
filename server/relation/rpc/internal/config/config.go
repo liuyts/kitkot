@@ -8,12 +8,15 @@ import (
 
 type Config struct {
 	zrpc.RpcServerConf
-
+	KafkaConf struct {
+		Addrs []string
+		Topic string
+	}
 	MySQLConf struct {
 		DataSource string
 	}
-
-	CacheRedis cache.CacheConf
-
-	RedisConf redis.RedisConf
+	CacheRedis  cache.CacheConf
+	RedisConf   redis.RedisConf
+	UserRpcConf zrpc.RpcClientConf
+	ChatRpcConf zrpc.RpcClientConf
 }

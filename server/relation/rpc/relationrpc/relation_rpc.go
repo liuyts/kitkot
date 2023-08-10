@@ -13,10 +13,9 @@ import (
 )
 
 type (
-	AddFollowRequest             = pb.AddFollowRequest
-	AddFollowResponse            = pb.AddFollowResponse
-	DelFollowRequest             = pb.DelFollowRequest
-	DelFollowResponse            = pb.DelFollowResponse
+	FollowActionRequest          = pb.FollowActionRequest
+	FollowActionResponse         = pb.FollowActionResponse
+	FriendUser                   = pb.FriendUser
 	GetFollowListRequest         = pb.GetFollowListRequest
 	GetFollowListResponse        = pb.GetFollowListResponse
 	GetFollowerListRequest       = pb.GetFollowerListRequest
@@ -29,10 +28,10 @@ type (
 	GetUserFollowerCountResponse = pb.GetUserFollowerCountResponse
 	IsFollowRequest              = pb.IsFollowRequest
 	IsFollowResponse             = pb.IsFollowResponse
+	User                         = pb.User
 
 	RelationRpc interface {
-		AddFollow(ctx context.Context, in *AddFollowRequest, opts ...grpc.CallOption) (*AddFollowResponse, error)
-		DelFollow(ctx context.Context, in *DelFollowRequest, opts ...grpc.CallOption) (*DelFollowResponse, error)
+		FollowAction(ctx context.Context, in *FollowActionRequest, opts ...grpc.CallOption) (*FollowActionResponse, error)
 		GetFollowList(ctx context.Context, in *GetFollowListRequest, opts ...grpc.CallOption) (*GetFollowListResponse, error)
 		GetFollowerList(ctx context.Context, in *GetFollowerListRequest, opts ...grpc.CallOption) (*GetFollowerListResponse, error)
 		GetUserFollowCount(ctx context.Context, in *GetUserFollowCountRequest, opts ...grpc.CallOption) (*GetUserFollowCountResponse, error)
@@ -52,14 +51,9 @@ func NewRelationRpc(cli zrpc.Client) RelationRpc {
 	}
 }
 
-func (m *defaultRelationRpc) AddFollow(ctx context.Context, in *AddFollowRequest, opts ...grpc.CallOption) (*AddFollowResponse, error) {
+func (m *defaultRelationRpc) FollowAction(ctx context.Context, in *FollowActionRequest, opts ...grpc.CallOption) (*FollowActionResponse, error) {
 	client := pb.NewRelationRpcClient(m.cli.Conn())
-	return client.AddFollow(ctx, in, opts...)
-}
-
-func (m *defaultRelationRpc) DelFollow(ctx context.Context, in *DelFollowRequest, opts ...grpc.CallOption) (*DelFollowResponse, error) {
-	client := pb.NewRelationRpcClient(m.cli.Conn())
-	return client.DelFollow(ctx, in, opts...)
+	return client.FollowAction(ctx, in, opts...)
 }
 
 func (m *defaultRelationRpc) GetFollowList(ctx context.Context, in *GetFollowListRequest, opts ...grpc.CallOption) (*GetFollowListResponse, error) {
