@@ -24,7 +24,7 @@ func main() {
 
 	queue := kq.MustNewQueue(c.KafkaConf, kq.WithHandle(s.Consume))
 	defer queue.Stop()
-	logx.Disable()
+	logx.MustSetup(c.Log)
 
 	fmt.Println("chat-mq started!!!")
 	queue.Start()

@@ -16,6 +16,7 @@ func CmdWithDir(dir string, commandName string, params ...string) (string, error
 	if err != nil {
 		return "", err
 	}
+
 	err = cmd.Wait()
 	return out.String(), err
 }
@@ -27,6 +28,7 @@ func CmdWithDirNoOut(dir string, commandName string, params ...string) error {
 	if err != nil {
 		return err
 	}
+
 	err = cmd.Wait()
 	return err
 }

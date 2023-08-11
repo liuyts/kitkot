@@ -14,13 +14,12 @@ func SaveUploadedFile(file *multipart.FileHeader, dst string) error {
 		return err
 	}
 	defer src.Close()
-
 	out, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer out.Close()
 
+	defer out.Close()
 	_, err = io.Copy(out, src)
 	return err
 }
@@ -30,8 +29,8 @@ func CalcFileHash(file *multipart.FileHeader) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer src.Close()
 
+	defer src.Close()
 	hash := md5.New()
 	io.Copy(hash, src)
 	return hex.EncodeToString(hash.Sum(nil)), nil
