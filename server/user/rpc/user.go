@@ -3,8 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"kitkot/server/user/rpc/internal/config"
 	"kitkot/server/user/rpc/internal/server"
 	"kitkot/server/user/rpc/internal/svc"
@@ -36,8 +34,6 @@ func main() {
 		}
 	})
 	defer s.Stop()
-
-	logx.DisableStat()
 
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()

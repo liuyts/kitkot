@@ -8,6 +8,7 @@ import (
 	"kitkot/server/favorite/rpc/favoriterpc"
 	"kitkot/server/user/rpc/userrpc"
 	"strconv"
+	"time"
 
 	"kitkot/server/video/rpc/internal/svc"
 	"kitkot/server/video/rpc/pb"
@@ -93,7 +94,12 @@ func (l *VideoFeedLogic) VideoFeed(in *pb.VideoFeedRequest) (resp *pb.VideoFeedR
 		resp.VideoList[i].CommentCount = countResp.Count
 	}
 
-	resp.NextTime = paris[len(paris)-1].Score
+	if len(paris) == 0 {
+		resp.NextTime = time.Now().Unix()
+		return
+	}
+
+	resp.NextTime = paris[len(paris)-1].Score - 1
 
 	return
 }

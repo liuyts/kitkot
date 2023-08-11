@@ -7,6 +7,7 @@ import (
 	"kitkot/server/apis/internal/svc"
 	"kitkot/server/apis/internal/types"
 	"kitkot/server/chat/rpc/pb"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,6 +31,10 @@ func (l *MessageChatLogic) MessageChat(req *types.MessageChatRequest) (resp *typ
 
 	if fromUserId == req.ToUserId {
 		return nil, errors.New("不能查看自己的消息记录")
+	}
+
+	if req.PreMsgTime == 0 {
+		req.PreMsgTime = time.Now().Unix()
 	}
 
 	chatResp, err := l.svcCtx.ChatRpc.MessageChat(l.ctx, &pb.MessageChatRequest{

@@ -12,8 +12,8 @@ type AuthFeedMiddleware struct {
 	RedisClient *redis.Redis
 }
 
-func NewAuthFeedMiddleware(redisClient *redis.Redis) *AuthMiddleware {
-	return &AuthMiddleware{
+func NewAuthFeedMiddleware(redisClient *redis.Redis) *AuthFeedMiddleware {
+	return &AuthFeedMiddleware{
 		RedisClient: redisClient,
 	}
 }
