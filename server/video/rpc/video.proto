@@ -89,6 +89,7 @@ message Video {
 
 message GetVideoListByUserIdRequest {
     int64 user_id = 1;
+    int64 to_user_id = 2;
 }
 
 message GetVideoListByUserIdResponse {

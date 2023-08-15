@@ -35,7 +35,7 @@ func (l *PublishVideoLogic) PublishVideo(in *pb.PublishVideoRequest) (resp *pb.P
 	video := &model.Video{}
 	_ = copier.Copy(video, in)
 	video.Id = l.svcCtx.Snowflake.Generate().Int64()
-	video.CreateTime = time.Now().Unix()
+	video.CreateTime = time.Now().UnixMilli()
 
 	// 丢到kafka里落库
 	videoJson, err := jsonx.MarshalToString(video)

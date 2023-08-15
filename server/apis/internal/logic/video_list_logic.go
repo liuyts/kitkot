@@ -29,7 +29,8 @@ func NewVideoListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VideoLi
 func (l *VideoListLogic) VideoList(req *types.VideoListRequest) (resp *types.VideoListResponse, err error) {
 	userId := l.ctx.Value(consts.UserId).(int64)
 	videoListByUserIdResp, err := l.svcCtx.VideoRpc.GetVideoListByUserId(l.ctx, &videorpc.GetVideoListByUserIdRequest{
-		UserId: userId,
+		UserId:   userId,
+		ToUserId: req.UserId,
 	})
 	if err != nil {
 		l.Errorf("Get video list by user id error: %v", err)

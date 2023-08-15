@@ -33,7 +33,7 @@ func (l *MessageChatLogic) MessageChat(in *pb.MessageChatRequest) (resp *pb.Mess
 
 	messageList := make([]*pb.Message, 0, len(messages))
 	resp = new(pb.MessageChatResponse)
-	copier.Copy(&messageList, &messages)
+	_ = copier.Copy(&messageList, &messages)
 	resp.MessageList = messageList
 
 	l.Info(resp.MessageList)

@@ -31,8 +31,9 @@ func NewGetVideoListByUserIdLogic(ctx context.Context, svcCtx *svc.ServiceContex
 
 func (l *GetVideoListByUserIdLogic) GetVideoListByUserId(in *pb.GetVideoListByUserIdRequest) (resp *pb.GetVideoListByUserIdResponse, err error) {
 	// 获取这个用户的所有视频id
-	userIdStr := strconv.FormatInt(in.UserId, 10)
-	idStrList, err := l.svcCtx.RedisClient.ZrevrangeCtx(l.ctx, consts.UserVideoRankPrefix+userIdStr, 0, -1)
+	toUserIdStr := strconv.FormatInt(in.ToUserId, 10)
+
+	idStrList, err := l.svcCtx.RedisClient.ZrevrangeCtx(l.ctx, consts.UserVideoRankPrefix+toUserIdStr, 0, -1)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +48,7 @@ func (l *GetVideoListByUserIdLogic) GetVideoListByUserId(in *pb.GetVideoListByUs
 	// 根据id获取视频的详细信息
 	userInfoResp, err := l.svcCtx.UserRpc.UserInfo(l.ctx, &userrpc.UserInfoRequest{
 		UserId:       in.UserId,
-		TargetUserId: in.UserId,
+		TargetUserId: in.ToUserId,
 	})
 	if err != nil {
 		l.Errorf("UserInfo error: %v", err)

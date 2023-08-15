@@ -33,6 +33,7 @@ func (l *VideoFeedLogic) VideoFeed(req *types.VideoFeedRequest) (resp *types.Vid
 	if ok && userId > 0 {
 		isLogin = true
 	}
+	// 第一次进入，获取最新的视频
 	if req.LatestTime == 0 {
 		req.LatestTime = time.Now().Unix()
 	}

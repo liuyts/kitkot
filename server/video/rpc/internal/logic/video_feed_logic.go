@@ -7,11 +7,10 @@ import (
 	"kitkot/server/comment/rpc/commentrpc"
 	"kitkot/server/favorite/rpc/favoriterpc"
 	"kitkot/server/user/rpc/userrpc"
-	"strconv"
-	"time"
-
 	"kitkot/server/video/rpc/internal/svc"
 	"kitkot/server/video/rpc/pb"
+	"strconv"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -37,12 +36,21 @@ func (l *VideoFeedLogic) VideoFeed(in *pb.VideoFeedRequest) (resp *pb.VideoFeedR
 		return nil, err
 	}
 
+	// 视频刷完了，从头开始刷
+	resp = new(pb.VideoFeedResponse)
+	if len(paris) == 0 {
+		resp.NextTime = time.Now().Unix()
+		paris, err = l.svcCtx.RedisClient.ZrevrangebyscoreWithScoresAndLimitCtx(l.ctx, consts.VideoRankKey, 0, time.Now().UnixMilli(), 0, 10)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	videoIdList := make([]int64, len(paris))
 	for i, pair := range paris {
 		videoIdList[i], _ = strconv.ParseInt(pair.Key, 10, 64)
 	}
 
-	resp = new(pb.VideoFeedResponse)
 	resp.VideoList = make([]*pb.Video, len(videoIdList))
 	// 根据id获取视频的详细信息
 	for i, videoId := range videoIdList {
@@ -92,11 +100,6 @@ func (l *VideoFeedLogic) VideoFeed(in *pb.VideoFeedRequest) (resp *pb.VideoFeedR
 			return nil, err
 		}
 		resp.VideoList[i].CommentCount = countResp.Count
-	}
-
-	if len(paris) == 0 {
-		resp.NextTime = time.Now().Unix()
-		return
 	}
 
 	resp.NextTime = paris[len(paris)-1].Score - 1
