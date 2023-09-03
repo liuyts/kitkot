@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"github.com/jinzhu/copier"
-	"github.com/zeromicro/go-zero/core/jsonx"
+	"kitkot/common/consts"
 	"kitkot/server/comment/model"
 	"kitkot/server/comment/rpc/commentrpc"
 	"kitkot/server/user/rpc/userrpc"
+	"strconv"
 	"time"
 
 	"kitkot/server/comment/rpc/internal/svc"
@@ -46,18 +47,25 @@ func (l *AddCommentLogic) AddComment(in *pb.AddCommentRequest) (resp *pb.AddComm
 	}
 
 	// 丢到kafka里异步落库
-	commentJson, _ := jsonx.MarshalToString(&comment)
-	err = l.svcCtx.KafkaPusher.Push(commentJson)
+	//commentJson, _ := jsonx.MarshalToString(&comment)
+	//err = l.svcCtx.KafkaPusher.Push(commentJson)
+	//if err != nil {
+	//	l.Errorf("Push comment error: %v", err)
+	//	return
+	//}
+	// 落库mysql
+	err = l.svcCtx.CommentModel.Insert(l.ctx, comment)
 	if err != nil {
-		l.Errorf("Push comment error: %v", err)
+		l.Errorf("Insert comment error: %v", err)
 		return
 	}
 
-	//err = l.svcCtx.CommentModel.Insert(l.ctx, comment)
-	//if err != nil {
-	//	l.Errorf("Insert comment error: %v", err)
-	//	return
-	//}
+	// 视频评论数+1
+	_, err = l.svcCtx.RedisClient.Incr(consts.VideoCommentCountPrefix + strconv.Itoa(int(comment.VideoId)))
+	if err != nil {
+		logx.Errorf("MessageAction RedisClient.Incr error: %s", err.Error())
+		return
+	}
 
 	// 获取用户信息
 	userInfoResp, err := l.svcCtx.UserRpc.UserInfo(l.ctx, &userrpc.UserInfoRequest{

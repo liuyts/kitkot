@@ -13,15 +13,13 @@ import (
 	"kitkot/server/apis/internal/svc"
 )
 
-var configFile = flag.String("f", "etc/nacos.yaml", "the config file")
+var configFile = flag.String("f", "etc/apis.yaml", "the config file")
 
 func main() {
 	flag.Parse()
 
-	var nacosConf config.NacosConf
-	conf.MustLoad(*configFile, &nacosConf)
 	var c config.Config
-	nacosConf.LoadConfig(&c)
+	conf.MustLoad(*configFile, &c)
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()

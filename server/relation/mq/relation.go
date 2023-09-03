@@ -9,15 +9,13 @@ import (
 	"kitkot/server/relation/mq/internal/service"
 )
 
-var configFile = flag.String("f", "etc/nacos.yaml", "the etc file")
+var configFile = flag.String("f", "etc/config.yaml", "the etc file")
 
 func main() {
 	flag.Parse()
 
-	var nacosConf config.NacosConf
-	conf.MustLoad(*configFile, &nacosConf)
 	var c config.Config
-	nacosConf.LoadConfig(&c)
+	conf.MustLoad(*configFile, &c)
 
 	s := service.NewService(c)
 

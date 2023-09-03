@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"errors"
+	"github.com/zeromicro/go-zero/core/mr"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"kitkot/common/consts"
@@ -32,26 +33,54 @@ func NewUserRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *User
 func (l *UserRegisterLogic) UserRegister(in *pb.UserRegisterRequest) (resp *pb.UserRegisterResponse, err error) {
 	dbUser, err := l.svcCtx.UserModel.FindOneByUsername(l.ctx, in.Username)
 	if err != nil && !errors.Is(err, model.ErrNotFound) {
-		return
+		return nil, errors.New("查找用户失败，err：" + err.Error())
 	}
+	err = nil
 	if dbUser != nil {
 		err = status.Error(codes.AlreadyExists, "用户名已存在")
 		return
 	}
 
 	id := l.svcCtx.Snowflake.Generate().Int64()
-	_, err = l.svcCtx.UserModel.Insert(l.ctx, &model.User{
-		Id:              id,
-		Username:        in.Username,
-		Password:        utils.EncryptPassword(in.Password),
-		Avatar:          consts.DefaultAvatar,
-		BackgroundImage: consts.DefaultBackGroundImage,
-		Signature:       consts.DefaultSignature,
-	})
-	if err != nil {
-		l.Errorf("UserRegister UserModel.Insert error: %v", err)
-		return
+	dbUser = &model.User{
+		Id:       id,
+		Username: in.Username,
+		Password: utils.EncryptPassword(in.Password),
 	}
+
+	go func() {
+		getAvatar := func() {
+			dbUser.Avatar, err = utils.GetRandomImageUrl()
+			if err != nil {
+				l.Errorf("UserRegister utils.GetRandomImageUrl error: %v", err)
+				dbUser.Avatar = consts.DefaultAvatar
+			}
+		}
+
+		getBackgroundImage := func() {
+			dbUser.BackgroundImage, err = utils.GetRandomImageUrl()
+			if err != nil {
+				l.Errorf("UserRegister utils.GetRandomImageUrl error: %v", err)
+				dbUser.BackgroundImage = consts.DefaultBackGroundImage
+			}
+		}
+
+		getSignature := func() {
+			dbUser.Signature, err = utils.GetRandomYiYan()
+			if err != nil {
+				l.Errorf("UserRegister utils.GetRandomSignature error: %v", err)
+				dbUser.Signature = consts.DefaultSignature
+			}
+		}
+
+		mr.FinishVoid(getAvatar, getBackgroundImage, getSignature)
+
+		_, err = l.svcCtx.UserModel.Insert(context.Background(), dbUser)
+		if err != nil {
+			l.Errorf("UserRegister UserModel.Insert error: %v", err)
+			return
+		}
+	}()
 
 	resp = new(pb.UserRegisterResponse)
 	resp.UserId = id

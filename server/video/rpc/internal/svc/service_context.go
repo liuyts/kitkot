@@ -2,7 +2,6 @@ package svc
 
 import (
 	"github.com/bwmarrin/snowflake"
-	"github.com/zeromicro/go-queue/kq"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/zrpc"
@@ -16,9 +15,9 @@ import (
 )
 
 type ServiceContext struct {
-	Config              config.Config
-	Snowflake           *snowflake.Node
-	KafkaPusher         *kq.Pusher
+	Config    config.Config
+	Snowflake *snowflake.Node
+	//KafkaPusher         *kq.Pusher
 	SensitiveWordFilter utils.SensitiveWordFilter
 	RedisClient         *redis.Redis
 	VideoModel          model.VideoModel
@@ -35,15 +34,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		trie.AddWords([]string{"傻逼", "傻叉", "垃圾", "尼玛", "傻狗", "傻逼吧你", "他妈的", "他妈"})
 	}()
 	return &ServiceContext{
-		Config:              c,
-		Snowflake:           snowflakeNode,
-		KafkaPusher:         kq.NewPusher(c.KafkaConf.Addrs, c.KafkaConf.Topic),
+		Config:    c,
+		Snowflake: snowflakeNode,
+		//KafkaPusher:         kq.NewPusher(c.KafkaConf.Addrs, c.KafkaConf.Topic),
 		SensitiveWordFilter: trie,
 		RedisClient:         redis.MustNewRedis(c.RedisConf),
 		VideoModel:          model.NewVideoModel(sqlx.NewMysql(c.MySQLConf.DataSource), c.CacheRedis),
 		CommentRpc:          commentrpc.NewCommentRpc(zrpc.MustNewClient(c.CommentRpcConf)),
-		//CommentRpc:          commentrpc.NewCommentRpc(zrpc.MustNewClient(c.CommentRpcConf)),
-		FavoriteRpc: favoriterpc.NewFavoriteRpc(zrpc.MustNewClient(c.FavoriteRpcConf)),
+		FavoriteRpc:         favoriterpc.NewFavoriteRpc(zrpc.MustNewClient(c.FavoriteRpcConf)),
 		//FavoriteRpc: mock.NewFavoriteRpc(),
 		UserRpc: userrpc.NewUserRpc(zrpc.MustNewClient(c.UserRpcConf)),
 	}

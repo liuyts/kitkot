@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/threading"
 	"kitkot/common/consts"
 	"kitkot/server/user/rpc/userrpc"
 	"strconv"
@@ -40,17 +41,31 @@ func (l *GetFollowListLogic) GetFollowList(in *pb.GetFollowListRequest) (resp *p
 	}
 	resp = new(pb.GetFollowListResponse)
 	resp.UserList = make([]*pb.User, len(userIdList))
+
+	group := threading.NewRoutineGroup()
+	var ResErr error
+
 	for i, userId := range userIdList {
-		userInfoResp, err := l.svcCtx.UserRpc.UserInfo(l.ctx, &userrpc.UserInfoRequest{
-			UserId:       in.UserId,
-			TargetUserId: userId,
+		i, userId := i, userId
+		group.RunSafe(func() {
+			userInfoResp, err := l.svcCtx.UserRpc.UserInfo(l.ctx, &userrpc.UserInfoRequest{
+				UserId:       in.UserId,
+				TargetUserId: userId,
+			})
+			if err != nil {
+				l.Errorf("user rpc get user info err: %v", err)
+				ResErr = err
+				return
+			}
+			resp.UserList[i] = new(pb.User)
+			_ = copier.Copy(resp.UserList[i], userInfoResp.User)
 		})
-		if err != nil {
-			l.Errorf("user rpc get user info err: %v", err)
-			return nil, err
-		}
-		resp.UserList[i] = new(pb.User)
-		_ = copier.Copy(resp.UserList[i], userInfoResp.User)
+	}
+
+	group.Wait()
+
+	if ResErr != nil {
+		return nil, ResErr
 	}
 
 	return

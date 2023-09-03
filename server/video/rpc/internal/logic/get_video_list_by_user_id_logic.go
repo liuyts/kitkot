@@ -3,6 +3,8 @@ package logic
 import (
 	"context"
 	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/mr"
+	"github.com/zeromicro/go-zero/core/threading"
 	"kitkot/common/consts"
 	"kitkot/server/comment/rpc/commentrpc"
 	"kitkot/server/favorite/rpc/favoriterpc"
@@ -55,46 +57,74 @@ func (l *GetVideoListByUserIdLogic) GetVideoListByUserId(in *pb.GetVideoListByUs
 		return nil, err
 	}
 
-	for i, videoId := range videoIdList {
+	group := threading.NewRoutineGroup()
+
+	var ResErr error
+
+	for i := 0; i < len(videoIdList); i++ {
+		i := i
 		resp.VideoList[i] = new(pb.Video)
-		dbVideo, err := l.svcCtx.VideoModel.FindOne(l.ctx, videoId)
-		if err != nil {
-			l.Errorf("FindOne error: %v", err)
-			return nil, err
-		}
-		_ = copier.Copy(resp.VideoList[i], dbVideo)
+		group.RunSafe(func() {
+			videoId := videoIdList[i]
+			err := mr.Finish(func() error {
+				dbVideo, err := l.svcCtx.VideoModel.FindOne(l.ctx, videoId)
+				if err != nil {
+					l.Errorf("FindOne error: %v", err)
+					return err
+				}
+				_ = copier.Copy(resp.VideoList[i], dbVideo)
 
-		resp.VideoList[i].User = new(pb.User)
-		_ = copier.Copy(resp.VideoList[i].User, userInfoResp.User)
+				resp.VideoList[i].User = new(pb.User)
+				_ = copier.Copy(resp.VideoList[i].User, userInfoResp.User)
+				return nil
 
-		VideoFavoriteCountResp, err := l.svcCtx.FavoriteRpc.GetVideoFavoriteCount(l.ctx, &favoriterpc.GetVideoFavoriteCountRequest{
-			VideoId: videoId,
+			}, func() error {
+				VideoFavoriteCountResp, err := l.svcCtx.FavoriteRpc.GetVideoFavoriteCount(l.ctx, &favoriterpc.GetVideoFavoriteCountRequest{
+					VideoId: videoId,
+				})
+				if err != nil {
+					l.Errorf("GetVideoFavoriteCount error: %v", err)
+					return err
+				}
+				resp.VideoList[i].FavoriteCount = VideoFavoriteCountResp.Count
+				return nil
+
+			}, func() error {
+				IsFavoriteResp, err := l.svcCtx.FavoriteRpc.IsFavorite(l.ctx, &favoriterpc.IsFavoriteRequest{
+					UserId:  in.UserId,
+					VideoId: videoId,
+				})
+				if err != nil {
+					l.Errorf("IsFavorite error: %v", err)
+					return err
+				}
+				resp.VideoList[i].IsFavorite = IsFavoriteResp.IsFavorite
+				return nil
+
+			}, func() error {
+				countResp, err := l.svcCtx.CommentRpc.GetCommentCount(l.ctx, &commentrpc.GetCommentCountRequest{
+					VideoId: videoId,
+				})
+				if err != nil {
+					l.Errorf("GetCommentCount error: %v", err)
+					return err
+				}
+				resp.VideoList[i].CommentCount = countResp.Count
+				return nil
+
+			})
+
+			if err != nil {
+				ResErr = err
+			}
 		})
-		if err != nil {
-			l.Errorf("GetVideoFavoriteCount error: %v", err)
-			return nil, err
-		}
-		resp.VideoList[i].FavoriteCount = VideoFavoriteCountResp.Count
-
-		IsFavoriteResp, err := l.svcCtx.FavoriteRpc.IsFavorite(l.ctx, &favoriterpc.IsFavoriteRequest{
-			UserId:  in.UserId,
-			VideoId: videoId,
-		})
-		if err != nil {
-			l.Errorf("IsFavorite error: %v", err)
-			return nil, err
-		}
-		resp.VideoList[i].IsFavorite = IsFavoriteResp.IsFavorite
-
-		countResp, err := l.svcCtx.CommentRpc.GetCommentCount(l.ctx, &commentrpc.GetCommentCountRequest{
-			VideoId: videoId,
-		})
-		if err != nil {
-			l.Errorf("GetCommentCount error: %v", err)
-			return nil, err
-		}
-		resp.VideoList[i].CommentCount = countResp.Count
 	}
+
+	if ResErr != nil {
+		return nil, ResErr
+	}
+
+	group.Wait()
 
 	return
 }

@@ -2,7 +2,6 @@ package svc
 
 import (
 	"github.com/bwmarrin/snowflake"
-	"github.com/zeromicro/go-queue/kq"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 	"kitkot/common/consts"
@@ -18,8 +17,8 @@ type ServiceContext struct {
 	Snowflake           *snowflake.Node
 	UserRpc             userrpc.UserRpc
 	SensitiveWordFilter utils.SensitiveWordFilter
-	KafkaPusher         *kq.Pusher
-	RedisClient         *redis.Redis
+	//KafkaPusher         *kq.Pusher
+	RedisClient *redis.Redis
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -37,7 +36,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		UserRpc:      userrpc.NewUserRpc(zrpc.MustNewClient(c.UserRpcConf)),
 		//UserRpc:             mock.UserRpc{},
 		SensitiveWordFilter: trie,
-		KafkaPusher:         kq.NewPusher(c.KafkaConf.Addrs, c.KafkaConf.Topic),
-		RedisClient:         redis.MustNewRedis(c.RedisConf),
+		//KafkaPusher:         kq.NewPusher(c.KafkaConf.Addrs, c.KafkaConf.Topic),
+		RedisClient: redis.MustNewRedis(c.RedisConf),
 	}
 }

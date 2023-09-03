@@ -4,7 +4,7 @@ const (
 	ProjectNamePrefix = "douyin:"
 
 	TokenPrefix = ProjectNamePrefix + "token:"
-	TokenTTL    = -1
+	TokenTTL    = 18000
 
 	LastMessagePrefix       = ProjectNamePrefix + "lastMessage:"
 	VideoCommentCountPrefix = ProjectNamePrefix + "videoCommentCount:"

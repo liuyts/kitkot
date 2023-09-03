@@ -2,11 +2,13 @@ package logic
 
 import (
 	"context"
-	"github.com/zeromicro/go-zero/core/jsonx"
 	"github.com/zeromicro/go-zero/core/logx"
+	"google.golang.org/protobuf/proto"
+	"kitkot/common/consts"
 	"kitkot/server/chat/model"
 	"kitkot/server/chat/rpc/internal/svc"
 	"kitkot/server/chat/rpc/pb"
+	"strconv"
 	"time"
 )
 
@@ -32,11 +34,33 @@ func (l *MessageActionLogic) MessageAction(in *pb.MessageActionRequest) (resp *p
 		Content:    in.Content,
 		CreateTime: time.Now().Unix(),
 	}
-	messageStr, err := jsonx.MarshalToString(message)
-	err = l.svcCtx.KafkaPusher.Push(messageStr)
+	//messageStr, err := jsonx.MarshalToString(message)
+	////err = l.svcCtx.KafkaPusher.Push(messageStr)
+	//if err != nil {
+	//	return nil, err
+	//}
+
+	_, err = l.svcCtx.MessageModel.Insert(context.Background(), message)
 	if err != nil {
-		return nil, err
+		logx.Errorf("MessageAction MessageModel.Insert error: %s", err.Error())
+		return
 	}
+
+	// 保存最新消息到redis
+	fromUserID := strconv.Itoa(int(message.FromUserId))
+	toUserID := strconv.Itoa(int(message.ToUserId))
+
+	lastMessage := &pb.LastMessage{Content: message.Content}
+	lastMessage.MsgType = consts.MsgTypeRecv
+	lastMessageRecvBytes, _ := proto.Marshal(lastMessage)
+	//lastMessageRecvStr, _ := jsonx.MarshalToString(lastMessage)
+	lastMessage.MsgType = consts.MsgTypeSend
+	lastMessageSendBytes, _ := proto.Marshal(lastMessage)
+	//lastMessageSendStr, err := jsonx.MarshalToString(lastMessage)
+
+	_ = l.svcCtx.RedisClient.Hset(consts.LastMessagePrefix+fromUserID, toUserID, string(lastMessageSendBytes))
+	_ = l.svcCtx.RedisClient.Hset(consts.LastMessagePrefix+toUserID, fromUserID, string(lastMessageRecvBytes))
+
 	resp = new(pb.MessageActionResponse)
 
 	return

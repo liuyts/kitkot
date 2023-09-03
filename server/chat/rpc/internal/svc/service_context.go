@@ -21,6 +21,7 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	mysqlConn := sqlx.NewMysql(c.MySQLConf.DataSource)
+
 	snowflakeNode, _ := snowflake.NewNode(consts.ChatMachineId)
 
 	return &ServiceContext{

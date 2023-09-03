@@ -48,24 +48,8 @@ func (l *UserInfoLogic) UserInfo(in *pb.UserInfoRequest) (resp *pb.UserInfoRespo
 			err = status.Error(codes.NotFound, "用户不存在")
 			return
 		}
-		//resp.User.Id = dbUser.Id
-		//resp.User.Username = dbUser.Username
 		_ = copier.Copy(resp.User, dbUser)
 	})
-
-	//group.RunSafe(func() {
-	//	resp.User.Avatar = utils.GetRandomImageUrl()
-	//})
-	//
-	//group.RunSafe(func() {
-	//	resp.User.BackgroundImage = utils.GetRandomImageUrl()
-	//})
-
-	//group.RunSafe(func() {
-	//	start := time.Now().UnixMilli()
-	//	resp.User.Signature = utils.GetRandomYiYan()
-	//	l.Infof("获取一言用时: %d ms", time.Now().UnixMilli()-start)
-	//})
 
 	group.RunSafe(func() {
 		followCountResp, ierr := l.svcCtx.RelationRpc.GetUserFollowCount(l.ctx, &relationrpc.GetUserFollowCountRequest{

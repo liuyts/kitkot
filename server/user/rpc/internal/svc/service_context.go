@@ -33,7 +33,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		SqlConn:     mysqlConn,
 		Snowflake:   snowflakeNode,
 		RedisClient: redis.MustNewRedis(c.RedisConf),
-		UserModel:   model.NewUserModel(mysqlConn),
+		UserModel:   model.NewUserModel(sqlx.NewMysql(c.MySQLConf.DataSource), c.CacheRedis),
 		RelationRpc: relationrpc.NewRelationRpc(zrpc.MustNewClient(c.RelationRpcConf)),
 		FavoriteRpc: favoriterpc.NewFavoriteRpc(zrpc.MustNewClient(c.FavoriteRpcConf)),
 		VideoRpc:    videorpc.NewVideoRpc(zrpc.MustNewClient(c.VideoRpcConf)),

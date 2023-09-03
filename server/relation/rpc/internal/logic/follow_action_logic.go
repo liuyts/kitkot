@@ -3,9 +3,9 @@ package logic
 import (
 	"context"
 	"errors"
-	"github.com/zeromicro/go-zero/core/jsonx"
 	"kitkot/common/consts"
 	"kitkot/server/chat/rpc/chatrpc"
+	"kitkot/server/relation/model"
 	"strconv"
 
 	"kitkot/server/relation/rpc/internal/svc"
@@ -99,14 +99,31 @@ func (l *FollowActionLogic) FollowAction(in *pb.FollowActionRequest) (resp *pb.F
 	}
 
 	// 丢到kafka去落库
-	inStr, err := jsonx.MarshalToString(in)
-	if err != nil {
-		return nil, err
-	}
-	err = l.svcCtx.KafkaPusher.Push(inStr)
-	if err != nil {
-		l.Errorf("kafka push err: %v", err)
-		return nil, err
+	//inStr, err := jsonx.MarshalToString(in)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//err = l.svcCtx.KafkaPusher.Push(inStr)
+	//if err != nil {
+	//	l.Errorf("kafka push err: %v", err)
+	//	return nil, err
+	//}
+	if in.ActionType == consts.FollowAdd {
+		_, err = l.svcCtx.FollowModel.Insert(context.Background(), &model.Follow{
+			Id:       l.svcCtx.Snowflake.Generate().Int64(),
+			UserId:   in.UserId,
+			FollowId: in.ToUserId,
+		})
+		if err != nil {
+			logx.Errorf("FollowModel.Insert err: %v", err)
+			return
+		}
+	} else {
+		err = l.svcCtx.FollowModel.DeleteByUIdAndFId(context.Background(), in.UserId, in.ToUserId)
+		if err != nil {
+			logx.Errorf("FollowModel.Delete err: %v", err)
+			return
+		}
 	}
 
 	resp = new(pb.FollowActionResponse)

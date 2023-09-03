@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"github.com/jinzhu/copier"
-	"github.com/zeromicro/go-zero/core/jsonx"
 	"kitkot/common/consts"
 	"kitkot/server/video/model"
 	"strconv"
@@ -38,14 +37,19 @@ func (l *PublishVideoLogic) PublishVideo(in *pb.PublishVideoRequest) (resp *pb.P
 	video.CreateTime = time.Now().UnixMilli()
 
 	// 丢到kafka里落库
-	videoJson, err := jsonx.MarshalToString(video)
+	//videoJson, err := jsonx.MarshalToString(video)
+	//if err != nil {
+	//	l.Errorf("jsonx.MarshalToString(video) err:%v", err)
+	//	return
+	//}
+	//err = l.svcCtx.KafkaPusher.Push(videoJson)
+	//if err != nil {
+	//	l.Errorf("l.svcCtx.KafkaPusher.Push(videoJson) err:%v", err)
+	//	return
+	//}
+	_, err = l.svcCtx.VideoModel.Insert(l.ctx, video)
 	if err != nil {
-		l.Errorf("jsonx.MarshalToString(video) err:%v", err)
-		return
-	}
-	err = l.svcCtx.KafkaPusher.Push(videoJson)
-	if err != nil {
-		l.Errorf("l.svcCtx.KafkaPusher.Push(videoJson) err:%v", err)
+		l.Errorf("insert video err:%v", err)
 		return
 	}
 

@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
@@ -27,14 +28,14 @@ func (m *customUserModel) FindPage(ctx context.Context, pageNum int, pageSize in
 	}
 	query := fmt.Sprintf("select %s from %s limit ?,?", userRows, m.table)
 	var resp []*User
-	err := m.conn.QueryRowsCtx(ctx, &resp, query, (pageNum-1)*pageSize, pageSize)
+	err := m.QueryRowsNoCacheCtx(ctx, &resp, query, (pageNum-1)*pageSize, pageSize)
 
 	return resp, err
 }
 
 // NewUserModel returns a model for the database table.
-func NewUserModel(conn sqlx.SqlConn) UserModel {
+func NewUserModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option) UserModel {
 	return &customUserModel{
-		defaultUserModel: newUserModel(conn),
+		defaultUserModel: newUserModel(conn, c, opts...),
 	}
 }

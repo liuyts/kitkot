@@ -32,6 +32,7 @@ func (m *AuthMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 
 		// token不为空，从redis中获取用户id
 		userIdStr, err := m.RedisClient.GetCtx(r.Context(), consts.TokenPrefix+token)
+
 		if err != nil {
 			logx.Errorf("redis get token failed, err:%v", err)
 			http.Error(w, consts.ErrTokenProve, http.StatusUnauthorized)

@@ -50,12 +50,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AuthFeed:    middleware.NewAuthFeedMiddleware(redisClient).Handle,
 		RedisClient: redisClient,
 		ChatRpc:     chatrpc.NewChatRpc(zrpc.MustNewClient(c.ChatRpcConf)),
-		UserRpc:     userrpc.NewUserRpc(zrpc.MustNewClient(c.UserRpcConf)),
-		CommentRpc:  commentrpc.NewCommentRpc(zrpc.MustNewClient(c.CommentRpcConf)),
-		VideoRpc:    videorpc.NewVideoRpc(zrpc.MustNewClient(c.VideoRpcConf)),
 		MinioClient: minioClient,
 		Snowflake:   snowflakeNode,
 		FavoriteRpc: favoriterpc.NewFavoriteRpc(zrpc.MustNewClient(c.FavoriteRpcConf)),
+		VideoRpc:    videorpc.NewVideoRpc(zrpc.MustNewClient(c.VideoRpcConf)),
 		RelationRpc: relationrpc.NewRelationRpc(zrpc.MustNewClient(c.RelationRpcConf)),
+		CommentRpc:  commentrpc.NewCommentRpc(zrpc.MustNewClient(c.CommentRpcConf)),
+		UserRpc:     userrpc.NewUserRpc(zrpc.MustNewClient(c.UserRpcConf)),
 	}
 }

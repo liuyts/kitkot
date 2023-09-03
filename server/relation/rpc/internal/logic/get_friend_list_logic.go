@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/jinzhu/copier"
+	"github.com/zeromicro/go-zero/core/threading"
 	"kitkot/server/chat/rpc/chatrpc"
 	"kitkot/server/user/rpc/userrpc"
 
@@ -44,21 +45,33 @@ func (l *GetFriendListLogic) GetFriendList(in *pb.GetFriendListRequest) (resp *p
 		return nil, err
 	}
 
-	l.Info(userIdList)
+	group := threading.NewRoutineGroup()
+	var ResErr error
 
 	for i, userId := range userIdList {
-		userInfoResp, err := l.svcCtx.UserRpc.UserInfo(l.ctx, &userrpc.UserInfoRequest{
-			UserId:       in.UserId,
-			TargetUserId: userId,
+		i, userId := i, userId
+		group.RunSafe(func() {
+			userInfoResp, err := l.svcCtx.UserRpc.UserInfo(l.ctx, &userrpc.UserInfoRequest{
+				UserId:       in.UserId,
+				TargetUserId: userId,
+			})
+			if err != nil {
+				l.Errorf("user rpc get user info err: %v", err)
+				ResErr = err
+				return
+			}
+			resp.UserList[i] = new(pb.FriendUser)
+			_ = copier.Copy(resp.UserList[i], userInfoResp.User)
+			resp.UserList[i].Message = ChatListResp.LastMessageList[i].Content
+			resp.UserList[i].MsgType = ChatListResp.LastMessageList[i].MsgType
 		})
-		if err != nil {
-			l.Errorf("user rpc get user info err: %v", err)
-			return nil, err
-		}
-		resp.UserList[i] = new(pb.FriendUser)
-		_ = copier.Copy(resp.UserList[i], userInfoResp.User)
-		resp.UserList[i].Message = ChatListResp.LastMessageList[i].Content
-		resp.UserList[i].MsgType = ChatListResp.LastMessageList[i].MsgType
+
+	}
+
+	group.Wait()
+
+	if ResErr != nil {
+		return nil, ResErr
 	}
 
 	return
